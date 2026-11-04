@@ -20,6 +20,19 @@ async function runCompile() {
       });
       return;
     }
+    // Pacote só com a DLL: já vem compilado, e o Bunny carrega direto.
+    const compiled = precompiledEntry(files());
+    if (compiled && !Object.keys(files()).some((path) => isSource(path))) {
+      state.problems = [];
+      state.dll = null;
+      $("dlDll").hidden = true;
+      if (window.BunnyAndroid) $("sendBunny2").hidden = false;
+      setView("out");
+      showOutput("ok", "Este mod já vem compilado", (out) => {
+        out.append(para(`O pacote traz ${compiled} e nenhum arquivo .cs. O Bunny carrega essa DLL sem compilar nada, então não há código para compilar aqui.`));
+      });
+      return;
+    }
     if (!engine.available) {
       state.problems = quick;
       const errs = quick.filter((p) => p.sev === "error").length, warns = quick.length - errs;

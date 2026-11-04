@@ -200,6 +200,12 @@ function classMembers(file, cls) {
   return { overrides, declared, bodies };
 }
 
+// O Bunny carrega <id>.dll antes de <id>.cs. Devolve o caminho da DLL, se o mod trouxer uma.
+function precompiledEntry(all) {
+  let id = "";
+  try { id = JSON.parse(all["manifest.json"]).id; } catch { return null; }
+  return typeof id === "string" && MOD_ID_RE.test(id) && all[id + ".dll"] !== undefined ? id + ".dll" : null;
+}
 function quickCheck(files, only = null) {
   const problems = [];
   const add = (sev, path, at, src, code, msg, hint) => {
@@ -222,7 +228,9 @@ function quickCheck(files, only = null) {
     csCount++;
     scans.push(scanFile(path, value));
   }
-  if (csCount === 0 && !only) add("error", "manifest.json", null, null, "limite", "O mod não tem nenhum arquivo .cs.");
+  const entry = precompiledEntry(files);
+  if (csCount === 0 && !only && !entry) add("error", "manifest.json", null, null, "limite", "O mod não tem nenhum arquivo .cs.");
+  if (csCount > 0 && !only && entry) add("warn", entry, null, null, "pacote", `O Bunny carrega ${entry} e ignora os arquivos .cs deste mod.`, "Para o Bunny usar o código daqui, apague a DLL da raiz do mod.");
 
   const projectTypes = new Map();
   const globals = new Set();
