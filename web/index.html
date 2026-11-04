@@ -1,0 +1,123 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"></head><body>
+<title>Bunny C# Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&family=Pixelify+Sans:wght@500;700&display=swap">
+<style>
+<!-- build:styles -->
+</style>
+
+<canvas id="scene" aria-hidden="true"></canvas>
+<div id="drawerScrim" hidden></div>
+<aside id="drawer" aria-label="Arquivos do mod" aria-hidden="true">
+  <div class="drawerhead"><b id="drawerTitle"></b><button class="btn iconbtn" id="drawerClose" aria-label="Fechar"><svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M3 3h2v2H3zM5 5h2v2H5zM7 7h2v2H7zM9 5h2v2H9zM11 3h2v2h-2zM5 9h2v2H5zM3 11h2v2H3zM9 9h2v2H9zM11 11h2v2h-2z"/></svg></button></div>
+  <div id="drawerBody"></div>
+</aside>
+<div class="app">
+  <header class="top">
+    <button class="btn iconbtn" id="menuBtn" aria-label="Abrir arquivos" title="Arquivos"><svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M2 3h12v2H2zM2 7h12v2H2zM2 11h12v2H2z"/></svg></button>
+    <div class="brand" aria-label="Bunny C# Studio">
+      <svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="var(--gold)" d="M4 0h2v5H4zM9 0h2v5H9zM3 5h9v1H3zM2 6h11v6H2zM3 12h9v2H3z"/><path fill="var(--on-gold)" d="M5 8h1v1H5zM9 8h1v1H9zM7 10h1v1H7z"/></svg>
+      <b>Bunny C# Studio</b>
+    </div>
+    <button class="btn modbtn" id="modSelect" aria-haspopup="dialog"><span id="modSelectName"></span><i aria-hidden="true">▾</i></button>
+    <span class="spacer"></span>
+    <button class="btn iconbtn" id="settingsBtn" aria-label="Configurações" title="Configurações"><svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M7 1h2v2h2V2h1v1h1v1h-1v2h2v2h-2v2h1v1h-1v1h-1v-1H9v3H7v-3H5v1H4v-1H3v-1h1V8H2V6h2V4H3V3h1V2h1v1h2zM7 6v3h2V6z"/></svg></button>
+    <button class="btn primary" id="compile" title="Ctrl+Enter"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M4 1h2v1h2v1h2v1h2v1h2v1h1v4h-1v1h-2v1h-2v1H8v1H6v1H4z"/></svg><span id="compileLabel">Verificar</span></button>
+  </header>
+
+  <main class="work">
+    <aside class="pane" id="filesPane">
+      <section class="modcard">
+        <h1 id="modName"></h1>
+        <p class="modmeta" id="modMeta"></p>
+        <p class="modsum" id="modSummary"></p>
+        <div class="modalert" id="modAlert" hidden></div>
+        <div class="modacts">
+          <button class="btn small" id="editMod">Editar dados</button>
+          <button class="btn small" id="newMod">Novo</button>
+          <button class="btn small" id="importBtn">Importar</button>
+          <button class="btn small" id="exportBtn">Exportar .bl</button>
+          <button class="btn small strong" id="sendBunny" hidden>Enviar para o Bunny</button>
+        </div>
+        <input type="file" id="importInput" hidden multiple accept=".bl,.bmod,.zip,.cs,.png,.json,.frag,.vert,.glsl,.txt,.md">
+        <p class="saved" id="saved"></p>
+      </section>
+      <div class="explorer" id="explorer">
+      <div class="panehead">
+        <h2>Arquivos <small id="fileCount"></small></h2>
+        <button class="btn small" id="newFile">+ Arquivo</button>
+      </div>
+      <div class="search"><input id="fileSearch" type="search" placeholder="Buscar arquivo" aria-label="Buscar arquivo"></div>
+      <div class="tree" id="tree"></div>
+      </div>
+    </aside>
+
+    <section class="pane" id="codePane">
+      <div class="opentabs" id="openTabs" role="tablist" aria-label="Arquivos abertos"></div>
+      <div class="ed-head">
+        <div class="path" id="activePath"></div>
+        <div class="tools">
+          <button class="tool" id="undoBtn" title="Desfazer" aria-label="Desfazer">↶</button>
+          <button class="tool" id="redoBtn" title="Refazer" aria-label="Refazer">↷</button>
+          <button class="tool" id="findBtn" title="Buscar (Ctrl+F)" aria-label="Buscar no arquivo">Buscar</button>
+          <button class="tool" id="outlineBtn" title="Classes e métodos deste arquivo" aria-label="Estrutura do arquivo">Estrutura</button>
+          <button class="tool accent" id="snipHere" title="Ctrl+Espaço" aria-label="Sugestões">Sugerir</button>
+        </div>
+      </div>
+      <form class="findbar" id="findBar" hidden>
+        <input id="findInput" type="search" placeholder="Buscar neste arquivo" aria-label="Buscar neste arquivo" autocapitalize="off" spellcheck="false">
+        <span class="count" id="findCount"></span>
+        <button class="tool" type="button" id="findPrev" aria-label="Anterior">↑</button>
+        <button class="tool" type="submit" id="findNext" aria-label="Próximo">↓</button>
+        <button class="tool" type="button" id="findClose" aria-label="Fechar busca">✕</button>
+      </form>
+      <div class="ed" id="ed">
+        <div class="gutter"><pre id="lines" aria-hidden="true"></pre></div>
+        <div class="code" id="codeWrap">
+          <div class="curline" id="curLine" aria-hidden="true"></div>
+          <pre class="hl" id="hl" aria-hidden="true"></pre>
+          <textarea id="src" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="Código"></textarea>
+        </div>
+        <div class="imgview" id="imgview" hidden></div>
+        <div id="pop" hidden><div id="popList" role="listbox" aria-label="Sugestões"></div><pre id="popPrev" hidden></pre></div>
+      </div>
+      <div class="keys" id="keys"></div>
+    </section>
+
+    <aside class="pane" id="snipPane">
+      <div class="panehead"><h2>Modelos</h2></div>
+      <p class="panehint">Toque para ver e usar. No editor, digite a palavra no começo da linha.</p>
+      <div class="search"><input id="snipSearch" type="search" placeholder="Buscar: arma, asas, classe, if…" aria-label="Buscar modelos"></div>
+      <div class="chips" id="snipChips" role="group" aria-label="Filtrar modelos"></div>
+      <div class="snips" id="snips"></div>
+    </aside>
+
+    <section class="pane" id="outPane">
+      <div id="outHead" data-state="idle">
+        <div class="state" id="outState">Nada compilado ainda.</div>
+        <span class="pill" id="engine" data-engine="missing"><i></i><span id="engineText">Verificando compilador</span></span>
+        <button class="btn small" id="dlDll" hidden>Baixar .dll</button>
+        <button class="btn small strong" id="sendBunny2" hidden>Enviar para o Bunny</button>
+      </div>
+      <div id="output" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <nav class="tabs" aria-label="Painéis">
+    <button data-view="files"><svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M1 3h5v1h1v1h8v8H1zM2 6v6h12V6z"/></svg>Projeto</button>
+    <button data-view="code"><svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M5 3h1v1H5v1H4v1H3v1H2v2h1v1h1v1h1v1h1v1H5v-1H4v-1H3v-1H2V9H1V7h1V6h1V5h1V4h1zM10 3h1v1h1v1h1v1h1v1h1v2h-1v1h-1v1h-1v1h-1v1h-1v-1h1v-1h1v-1h1V9h1V7h-1V6h-1V5h-1V4h-1z"/></svg>Código</button>
+    <button data-view="snips"><svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM11 9h1v2h2v1h-2v2h-1v-2H9v-1h2z"/></svg>Modelos</button>
+    <button data-view="out"><svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M2 2h12v12H2zM3 3v10h10V3zM5 7h1v1h1v1h1V8h1V7h1V6h1v1h-1v1h-1v1H9v1H8v1H7v-1H6V9H5z"/></svg>Saída<span class="badge" id="badge" hidden></span></button>
+  </nav>
+</div>
+
+<dialog id="dlg"><form method="dialog" id="dlgForm"></form></dialog>
+<dialog id="sheet" class="sheet"><div id="sheetBody"></div></dialog>
+<dialog id="mods" class="sheet tall"><div id="modsBody"></div></dialog>
+<dialog id="settings" class="page"><div id="settingsBody"></div></dialog>
+
+<script>
+<!-- build:scripts -->
+</script>
+
+</body></html>

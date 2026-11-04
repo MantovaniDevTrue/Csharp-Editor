@@ -1,0 +1,79 @@
+/* ---------- Identidade: painéis de jogo sobre o céu noturno ---------- */
+#scene { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; image-rendering: pixelated; }
+.top { background: var(--glass); border-bottom: 3px solid var(--outline); box-shadow: 0 2px 0 var(--slot-line); }
+.brand b { text-shadow: 2px 2px 0 var(--outline); }
+.pane { background: var(--glass); }
+#codePane { background: var(--ed-bg); }
+.work { background: transparent; }
+#filesPane { border-right: 3px solid var(--outline); }
+#snipPane { border-left: 3px solid var(--outline); }
+#outPane { border-top: 3px solid var(--outline); }
+
+.btn { background: var(--slot); border: 0; border-radius: 0; clip-path: var(--px); box-shadow: inset 0 0 0 2px var(--slot-line), inset 2px 2px 0 2px #ffffff14; font-family: var(--f-pixel); font-weight: 500; letter-spacing: .3px; }
+.btn:hover, .btn:active { box-shadow: inset 0 0 0 2px var(--gold); color: var(--gold); }
+.btn.strong { box-shadow: inset 0 0 0 2px var(--gold); color: var(--gold); font-weight: 700; }
+.btn.primary, .btn.primary:hover { background: var(--go); color: var(--on-go); box-shadow: inset 0 0 0 2px var(--go-dark), inset 2px 2px 0 2px #ffffff40; font-weight: 700; }
+select.btn { font-family: var(--f-pixel); }
+
+.pane h2, .snips h3 { display: inline-block; margin: 0; padding: 4px 10px; background: var(--tag); color: #fff; clip-path: var(--px); font: 700 14px/1.2 var(--f-pixel); letter-spacing: .4px; text-shadow: 1px 1px 0 var(--outline); box-shadow: inset 0 0 0 2px #ffffff26; }
+.pane h2 small { color: #d6f3f4; font: 400 11.5px var(--f-ui); margin-left: 3px; }
+.snips h3 { margin-top: 10px; align-self: flex-start; font-size: 13px; }
+.panehead { padding-top: 12px; }
+.panehint { margin-top: 2px; }
+
+.modcard { margin: 10px; padding: 12px; background: var(--panel); border: 0; clip-path: var(--px); box-shadow: inset 0 0 0 2px var(--slot-line), inset 3px 3px 0 1px #ffffff12; }
+.modcard h1 { color: #fff; text-shadow: 2px 2px 0 var(--outline); }
+.modmeta { color: var(--gold); }
+.modacts .btn { background: var(--slot); }
+
+.search input { background: var(--slot); border: 0; border-radius: 0; clip-path: var(--px); box-shadow: inset 0 0 0 2px var(--slot-line); }
+.search input:focus { box-shadow: inset 0 0 0 2px var(--gold); outline: 0; }
+.row.file.on { background: var(--slot); box-shadow: inset 3px 0 0 var(--gold); }
+.row.dir button { color: var(--accent); font-family: var(--f-pixel); font-weight: 500; }
+
+.card { background: var(--panel); border: 0; border-radius: 0; clip-path: var(--px); box-shadow: inset 0 0 0 2px var(--slot-line), inset 3px 3px 0 1px #ffffff10; padding: 9px 11px; }
+.card:hover, .card:active { box-shadow: inset 0 0 0 2px var(--gold); }
+.card b { font-family: var(--f-pixel); font-weight: 500; font-size: 15px; letter-spacing: .2px; }
+.card code { color: var(--gold); }
+.chips button { border: 0; border-radius: 0; clip-path: var(--px); background: var(--slot); box-shadow: inset 0 0 0 2px var(--slot-line); color: var(--ink); font-family: var(--f-pixel); }
+.chips button[aria-pressed="true"] { background: var(--gold); box-shadow: inset 0 0 0 2px #7a5a10; color: var(--on-gold); }
+
+.tile { background: var(--panel); border: 0; clip-path: var(--px); box-shadow: inset 0 0 0 2px var(--slot-line); border-radius: 0; text-align: center; padding: 8px 6px; }
+.tile b { color: var(--gold); font-family: var(--f-pixel); font-size: 22px; text-shadow: 2px 2px 0 var(--outline); }
+.tile span { color: var(--ink); }
+#outHead .state { font-family: var(--f-pixel); font-weight: 500; font-size: 16px; }
+.emptystate b { color: var(--gold); }
+
+.opentabs { background: var(--outline); }
+.opentab { background: var(--slot); }
+.opentab.on { background: var(--ed-bg); box-shadow: inset 0 3px 0 var(--gold); }
+.ed-head { background: var(--panel); border-bottom: 2px solid var(--outline); }
+.tool { font-family: var(--f-pixel); border-radius: 0; }
+.tool.accent { border: 0; clip-path: var(--px); box-shadow: inset 0 0 0 2px var(--gold); color: var(--gold); }
+.keys { background: var(--panel); border-top: 2px solid var(--outline); }
+.keys button { background: var(--slot); border: 0; border-radius: 0; clip-path: var(--px); box-shadow: inset 0 0 0 2px var(--slot-line); }
+#pop { border: 0; background: var(--panel); outline: 3px solid var(--slot-line); }
+dialog { background: var(--panel); border: 3px solid var(--slot-line); border-radius: 0; }
+dialog input { border: 0; border-radius: 0; clip-path: var(--px); box-shadow: inset 0 0 0 2px var(--slot-line); }
+dialog h2 { color: #fff; text-shadow: 2px 2px 0 var(--outline); }
+.toast { background: var(--gold); color: var(--on-gold); border-radius: 0; clip-path: var(--px); font-weight: 700; }
+
+.tabs { background: var(--nav); border-top: 3px solid var(--outline); box-shadow: inset 0 2px 0 #ffffff24; grid-template-columns: 1fr 1fr 84px 1fr 1fr; padding: 5px 4px calc(5px + env(safe-area-inset-bottom, 0px)); gap: 3px; }
+.tabs button { min-height: 58px; font: 500 13px var(--f-pixel); color: var(--ink); letter-spacing: .2px; }
+.tabs button svg { width: 34px; height: 34px; padding: 7px; background: var(--slot); clip-path: var(--px); box-shadow: inset 0 0 0 2px var(--outline); }
+.tabs button[aria-current="page"] { color: var(--gold); box-shadow: none; }
+.tabs button[aria-current="page"] svg { background: var(--gold); color: var(--on-gold); box-shadow: inset 0 0 0 2px #7a5a10; }
+.tabs button:nth-child(3) { grid-column: 4; }
+.tabs button:nth-child(4) { grid-column: 5; }
+
+@media (max-width: 860px) {
+  .work { margin-bottom: 14px; }
+  .modcard { margin: 8px 12px; }
+  /* O botão principal fica no centro da barra, como o de jogar. */
+  #compile { position: fixed; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 30; width: 74px; height: 74px; min-height: 0; padding: 0; border-radius: 50%; clip-path: none; background: var(--nav); box-shadow: 0 0 0 3px var(--outline), inset 0 0 0 4px var(--slot-line); color: var(--go); }
+  #compile:hover, #compile:active { background: var(--slot); box-shadow: 0 0 0 3px var(--outline), inset 0 0 0 4px var(--gold); color: var(--go); }
+  #compile:disabled { opacity: 1; color: var(--muted); }
+  #compile .ico { width: 42px; height: 42px; margin-left: 4px; filter: drop-shadow(2px 2px 0 var(--outline)); }
+  #compileLabel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  body.kb #compile { display: none; }
+}

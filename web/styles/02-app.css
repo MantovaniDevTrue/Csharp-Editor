@@ -1,0 +1,64 @@
+/* ---------- Comportamento de app, não de página ---------- */
+html, body { overflow: hidden; overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
+.work { overflow: hidden; }
+body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation; }
+textarea, input, pre.log, pre.preview, .prob .go { -webkit-user-select: text; user-select: text; }
+img { -webkit-user-drag: none; }
+#src { scrollbar-width: none; }
+#src::-webkit-scrollbar { display: none; }
+button:focus:not(:focus-visible) { outline: 0; }
+
+/* Quebra de linha */
+body.wrap .hl, body.wrap #src { white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; padding-right: 10px; }
+body.wrap .hl { width: 100%; min-width: 0; }
+body.wrap #src { overflow-x: hidden; }
+body.wrap .hl .msg { display: none; }
+.gutter .gl { display: block; }
+.curline { position: absolute; left: 0; right: 0; height: var(--code-line); background: #ffffff0d; box-shadow: inset 2px 0 0 var(--gold); pointer-events: none; }
+body.nocur .curline { display: none; }
+.hl .l.flash { animation: lineflash .6s ease-out; }
+@keyframes lineflash { from { background: #f4c04a3d; } to { background: transparent; } }
+
+/* Efeito ao digitar */
+.fx { position: absolute; z-index: 5; pointer-events: none; font: var(--code-size)/var(--code-line) var(--f-code); color: var(--gold); text-shadow: 0 0 6px #f4c04aaa; animation: charpop .34s ease-out forwards; }
+@keyframes charpop { 0% { transform: translateY(0) scale(1.5); opacity: 1; } 100% { transform: translateY(-9px) scale(1); opacity: 0; } }
+.spark { position: absolute; z-index: 5; width: 3px; height: 3px; background: var(--gold); pointer-events: none; animation: spark .42s ease-out forwards; }
+@keyframes spark { to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
+.confetti { position: fixed; z-index: 60; width: 5px; height: 5px; pointer-events: none; animation: confetti .8s cubic-bezier(.2,.7,.4,1) forwards; }
+@keyframes confetti { to { transform: translate(var(--dx), var(--dy)) rotate(200deg); opacity: 0; } }
+
+/* Botões e abas reagem ao toque */
+.btn, .card, .tool, .keys button, .chips button, .tabs button, .row .open, .sheetitem, .modrow .main, .switch, .seg button { transition: transform .11s cubic-bezier(.3,1.6,.6,1), box-shadow .12s, background-color .12s, color .12s; }
+.btn:active, .card:active, .tool:active, .keys button:active, .chips button:active, .sheetitem:active, .seg button:active { transform: scale(.94); }
+.tabs button:active svg { transform: scale(.82); }
+.tabs button svg { transition: transform .14s cubic-bezier(.3,1.8,.6,1), background-color .16s; }
+.tabs button[aria-current="page"] svg { animation: tabpop .32s cubic-bezier(.3,1.8,.5,1); }
+@keyframes tabpop { 0% { transform: translateY(0) scale(.8); } 55% { transform: translateY(-5px) scale(1.12); } 100% { transform: none; } }
+.row.file:active, .row.dir:active { background: var(--slot); }
+.row.pressing { background: var(--slot); box-shadow: inset 0 0 0 2px var(--gold); }
+.opentab { animation: rise .16s ease-out; }
+.card { animation: rise .24s ease-out both; }
+.tile { animation: tilein .32s cubic-bezier(.3,1.5,.6,1) both; }
+.tile:nth-child(2) { animation-delay: .04s; } .tile:nth-child(3) { animation-delay: .08s; } .tile:nth-child(4) { animation-delay: .12s; } .tile:nth-child(5) { animation-delay: .16s; } .tile:nth-child(6) { animation-delay: .2s; } .tile:nth-child(7) { animation-delay: .24s; }
+@keyframes rise { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes tilein { from { transform: scale(.7); opacity: 0; } to { transform: none; opacity: 1; } }
+.prob { animation: rise .2s ease-out both; }
+.toast { animation: toastin .24s cubic-bezier(.3,1.5,.6,1); }
+@keyframes toastin { from { transform: translate(-50%, 16px); opacity: 0; } to { transform: translateX(-50%); opacity: 1; } }
+#outHead[data-state="fail"] { animation: shake .36s; }
+@keyframes shake { 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } }
+@media (max-width: 860px) {
+  body[data-view="files"] #filesPane, body[data-view="code"] #codePane, body[data-view="snips"] #snipPane, body[data-view="out"] #outPane { animation: viewin .2s ease-out; }
+  @keyframes viewin { from { transform: translateX(var(--from, 12px)); opacity: .3; } to { transform: none; opacity: 1; } }
+  #compile { transition: transform .14s cubic-bezier(.3,1.7,.6,1), box-shadow .14s; }
+  #compile:active { transform: translateX(-50%) scale(.88); }
+  #compile.busy { animation: fabspin 1s ease-in-out infinite; }
+  @keyframes fabspin { 0%, 100% { box-shadow: 0 0 0 3px var(--outline), inset 0 0 0 4px var(--slot-line); } 50% { box-shadow: 0 0 0 3px var(--outline), inset 0 0 0 4px var(--go), 0 0 18px var(--go); } }
+  #compile.okpulse { animation: okpulse .6s ease-out; }
+  @keyframes okpulse { 0% { transform: translateX(-50%) scale(1); } 35% { transform: translateX(-50%) scale(1.17); } 100% { transform: translateX(-50%) scale(1); } }
+  #compile.failshake { animation: fabshake .36s; }
+  @keyframes fabshake { 20% { transform: translateX(calc(-50% - 6px)); } 40% { transform: translateX(calc(-50% + 6px)); } 60% { transform: translateX(calc(-50% - 3px)); } 80% { transform: translateX(calc(-50% + 3px)); } }
+}
+body.noanim *, body.noanim *::before, body.noanim *::after { animation: none !important; transition: none !important; }
+@media (prefers-reduced-motion: reduce) { .fx, .spark, .confetti { display: none; } }
+

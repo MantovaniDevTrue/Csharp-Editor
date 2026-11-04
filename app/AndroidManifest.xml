@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sem permissao de internet: a interface e o Roslyn vem dentro do APK. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Para abrir o Bunny e ler a API C# do APK dele; sem isto o Android 11+ esconde o app. -->
+    <queries>
+        <package android:name="com.bunnyloader" />
+        <package android:name="com.bunnyloader.bench" />
+    </queries>
+    <application
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:supportsRtl="false"
+        android:theme="@style/AppTheme" />
+</manifest>

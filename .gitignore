@@ -1,0 +1,11 @@
+bin/
+obj/
+build/
+app/Assets/
+__pycache__/
+*.apk
+*.aab
+*.dll
+*.pdb
+*.keystore
+*.jks

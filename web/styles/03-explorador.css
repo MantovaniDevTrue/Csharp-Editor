@@ -1,0 +1,36 @@
+/* Explorador, no estilo de um editor de PC */
+.explorer { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.tree { font: 13.5px var(--f-ui); }
+.tree .row { position: relative; min-height: 34px; gap: 4px; padding: 0 4px 0 calc(8px + var(--d, 0) * 16px); border-bottom: 1px solid #ffffff0f;
+  background-image: repeating-linear-gradient(to right, #ffffff24 0 1px, transparent 1px 16px); background-repeat: no-repeat; background-position: 15px 0; background-size: calc(var(--d, 0) * 16px) 100%; }
+.tree .row.file:hover, .tree .row.file:active, .tree .row.dir:active { background-color: var(--slot); }
+.tree .row.dir { min-height: 34px; padding-right: 8px; }
+.tree .row.dir button { color: var(--ink); font: 500 13.5px var(--f-ui); gap: 6px; }
+.tree .row.dir .caret { color: var(--muted); }
+.tree .row.dir .n { color: var(--muted); }
+.tree .row .open { gap: 7px; padding: 5px 2px; color: var(--ink); }
+.tree .row .open img { width: 16px; height: 16px; }
+.tree .row .more { width: 30px; height: 30px; opacity: .6; }
+.fileicon { flex: none; width: 16px; height: 16px; display: grid; place-items: center; font: 700 8.5px/1 var(--f-code); color: #06121f; background: #8aa6c2; }
+.fileicon.cs { background: #7bd88f; }
+.fileicon.json { background: var(--gold); }
+.fileicon.loc { background: #6cc4e8; }
+.foldericon { flex: none; width: 16px; height: 16px; color: #7f99b5; }
+/* O caminho até o arquivo aberto, e a pasta em que ele está. */
+.tree .row.dir.inpath button .name { color: var(--gold); }
+.tree .row.dir.inpath .foldericon { color: var(--gold); }
+.tree .row.dir.current { background-color: #f5c24c14; }
+.tree .row.dir.current::before, .tree .row.incurrent::before { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--gold); left: calc(15px + (var(--d, 1) - 1) * 16px); }
+.tree .row.dir.current::before { left: 0; width: 3px; }
+.tree .row.file.on { background-color: #f5c24c26; box-shadow: inset 3px 0 0 var(--gold); }
+.tree .row.file.on .open span:last-child { color: #fff; font-weight: 600; }
+/* Barra lateral */
+#drawerScrim { position: fixed; inset: 0; z-index: 70; background: #03081899; }
+#drawer { position: fixed; top: 0; bottom: 0; left: 0; z-index: 71; width: min(88vw, 380px); display: flex; flex-direction: column; background: var(--panel); box-shadow: 2px 0 0 var(--slot-line), 8px 0 24px #0008; transform: translateX(-105%); visibility: hidden; transition: transform .18s ease, visibility .18s; padding-top: env(safe-area-inset-top); }
+#drawer.open { transform: none; visibility: visible; }
+.drawerhead { display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 12px; border-bottom: 2px solid var(--slot-line); }
+.drawerhead b { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 700 16px var(--f-pixel); color: #fff; }
+#drawerBody { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+@media (min-width: 900px) { #menuBtn { display: none; } }
+@media (max-width: 899px) { .top .brand { display: none; } }
+

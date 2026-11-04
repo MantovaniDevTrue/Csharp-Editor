@@ -1,0 +1,186 @@
+name: APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "app/**"
+      - "web/**"
+      - "tools/**"
+      - "tests/**"
+      - "bunny-upstream.txt"
+      - ".github/workflows/build-apk.yml"
+
+concurrency:
+  group: bunny-studio-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Baixar o Bunny Loader no commit fixado
+        run: |
+          git init -q build/bunny-upstream
+          git -C build/bunny-upstream fetch -q --depth 1 https://github.com/JonataOliveiraa/Bunny-Loader "$(cat bunny-upstream.txt)"
+          git -C build/bunny-upstream checkout -q FETCH_HEAD
+
+      - uses: actions/setup-dotnet@v4
+        id: dotnet
+        with:
+          dotnet-version: "10.0.x"
+
+      # O runner pode trazer SDKs mais novos; o workload precisa ser o do .NET 10.
+      - name: Fixar o SDK 10 nesta execucao
+        run: echo '{"sdk":{"version":"${{ steps.dotnet.outputs.dotnet-version }}"}}' > global.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Instalar o workload android
+        run: dotnet workload install android
+
+      - name: Atualizar o indice da API e testar a interface
+        env:
+          BUNNY_UPSTREAM: build/bunny-upstream
+        run: |
+          pip install --quiet playwright
+          python3 -m playwright install --with-deps chromium
+          python3 tests/test_editor.py
+
+      - name: Colocar a interface e as fontes no app
+        run: |
+          python3 tools/build_web.py
+          dotnet run --project tools/roslyn-pt/RoslynPt.csproj -c Release -- "$PWD/app/Assets/site/roslyn-pt.json"
+          python3 tools/bundle_fonts.py app/Assets/site
+
+      - name: Preparar a assinatura
+        env:
+          KEYSTORE_B64: ${{ secrets.BUNNY_KEYSTORE_B64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.BUNNY_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.BUNNY_KEY_ALIAS }}
+        run: |
+          STORE="$RUNNER_TEMP/bunny.jks"
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$STORE"
+          else
+            echo "::warning::Sem secrets de assinatura: chave temporaria, o APK nao atualiza por cima da versao anterior."
+            KEYSTORE_PASSWORD="$(openssl rand -hex 16)"
+            KEY_ALIAS=bunny
+            echo "::add-mask::$KEYSTORE_PASSWORD"
+            keytool -genkeypair -keystore "$STORE" -storepass "$KEYSTORE_PASSWORD" -keypass "$KEYSTORE_PASSWORD" -alias bunny -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Bunny CSharp Studio"
+          fi
+          { echo "BUNNY_KEYSTORE=$STORE"; echo "BUNNY_KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD"; echo "BUNNY_KEY_ALIAS=$KEY_ALIAS"; } >> "$GITHUB_ENV"
+
+      - name: Gerar os APKs
+        run: |
+          build() {
+            rm -rf app/bin app/obj
+            dotnet publish app/BunnyStudio.csproj -c Release -f net10.0-android -r "$1" -o "build/publish-$1" \
+              -p:BunnyTestRefs="${3:-}" \
+              -p:ApplicationVersion="$GITHUB_RUN_NUMBER" -p:ApplicationDisplayVersion="0.2.$GITHUB_RUN_NUMBER" \
+              -p:AndroidKeyStore=true -p:AndroidSigningKeyStore="$BUNNY_KEYSTORE" -p:AndroidSigningKeyAlias="$BUNNY_KEY_ALIAS" \
+              -p:AndroidSigningKeyPass="$BUNNY_KEYSTORE_PASSWORD" -p:AndroidSigningStorePass="$BUNNY_KEYSTORE_PASSWORD"
+            mkdir -p build/apk
+            cp "$(find "build/publish-$1" -name '*-Signed.apk' | head -1)" "build/apk/$2"
+          }
+          build android-arm64 BunnyCSharpStudio.apk
+          # O APK do emulador leva uma API de teste. O publicado usa so a do Bunny instalado.
+          dotnet build tools/stub-api/BunnyLoader.csproj -c Release -o build/stub
+          REF_PACK="$(dirname "$(find "$(dirname "$(readlink -f "$(command -v dotnet)")")/packs/Microsoft.NETCore.App.Ref" -path '*/ref/net10.0/System.Runtime.dll' | sort -V | tail -1)")"
+          mkdir -p build/test-refs
+          cp build/stub/BunnyLoader.dll "$REF_PACK"/*.dll build/test-refs/
+          ( cd build/test-refs && ls *.dll > references.txt )
+          build android-x64 BunnyCSharpStudio-emulator.apk "$PWD/build/test-refs"
+          ls -la build/apk
+
+      - name: Ver o que o ultimo Bunny publicado traz de C#
+        continue-on-error: true
+        run: |
+          curl -fsSL -o build/bunny.apk "https://github.com/JonataOliveiraa/Bunny-Loader/releases/latest/download/bunny-loader.apk" \
+            || curl -fsSL -o build/bunny.apk "https://github.com/JonataOliveiraa/Bunny-Loader/releases/download/v0.1.0-dev.20261006/bunny-loader.apk"
+          unzip -l build/bunny.apk | grep -cE 'assets/dotnet/' || true
+          unzip -p build/bunny.apk assets/dotnet/references.txt | head -4 || true
+          for name in ModItem ModProjectile GlobalItem ModSystem; do
+            echo "$name: $(unzip -p build/bunny.apk assets/dotnet/BunnyLoader.dll | grep -a -c "$name")"
+          done
+          rm -f build/bunny.apk
+
+      - name: Mostrar a assinatura do APK
+        run: |
+          APKSIGNER="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner"
+          "$APKSIGNER" verify --print-certs build/apk/BunnyCSharpStudio.apk | tee build/apk-signature.txt
+          grep -i 'SHA-256' build/apk-signature.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BunnyCSharpStudio-apk
+          path: build/apk/*.apk
+          if-no-files-found: error
+
+  emulator:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: BunnyCSharpStudio-apk
+          path: build/apk
+
+      - name: Habilitar KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Compilar um mod dentro do APK
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          ram-size: 4096M
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          script: tests/emulator_smoke.sh build/apk/BunnyCSharpStudio-emulator.apk build/emulator
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: emulator-result
+          path: build/emulator
+          if-no-files-found: ignore
+
+  release:
+    needs: emulator
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: BunnyCSharpStudio-apk
+          path: build/apk
+
+      - name: Atualizar o release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release delete editor-latest --yes --cleanup-tag || true
+          gh release create editor-latest build/apk/BunnyCSharpStudio.apk \
+            --target "$GITHUB_SHA" --prerelease \
+            --title "Bunny C# Studio (build ${GITHUB_RUN_NUMBER})" \
+            --notes "APK gerado do commit ${GITHUB_SHA}. Compilou um mod em um emulador Android, com uma API de teste, antes de ser publicado."

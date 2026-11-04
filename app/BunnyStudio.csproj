@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- O mesmo Roslyn e o mesmo ModCompiler do Bunny Loader, no processador, com o JIT do .NET. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-android</TargetFramework>
+    <SupportedOSPlatformVersion>26</SupportedOSPlatformVersion>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>BunnyStudio</RootNamespace>
+    <AssemblyName>BunnyStudio</AssemblyName>
+    <ApplicationId>io.github.mantovanidevtrue.bunnystudio</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>0.2.1</ApplicationDisplayVersion>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <!-- Roslyn e os mods usam reflexao e APIs variadas: nada pode ser removido do framework. -->
+    <PublishTrimmed>false</PublishTrimmed>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <RunAOTCompilation>false</RunAOTCompilation>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <!-- Checkout do JonataOliveiraa/Bunny-Loader, no commit fixado em bunny-upstream.txt. -->
+    <BunnyUpstream Condition="'$(BunnyUpstream)' == ''">$(MSBuildThisFileDirectory)../build/bunny-upstream</BunnyUpstream>
+  </PropertyGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets/site/**/*" />
+    <!-- So no APK do emulador: uma API de teste, ja que la nao ha Bunny instalado. -->
+    <AndroidAsset Include="$(BunnyTestRefs)/*" Link="Assets/testrefs/%(Filename)%(Extension)" Condition="'$(BunnyTestRefs)' != ''" />
+    <Reference Include="Mono.Android.Export" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.6.0" />
+    <Compile Include="$(BunnyUpstream)/app/src/main/csharp/BunnyLoader.Compiler/ModCompiler.cs" Link="Upstream/ModCompiler.cs" />
+    <Compile Include="$(BunnyUpstream)/app/src/main/csharp/BunnyLoader.Compiler/ModBuild.cs" Link="Upstream/ModBuild.cs" />
+  </ItemGroup>
+</Project>
