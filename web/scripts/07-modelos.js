@@ -245,7 +245,7 @@ public class «1:MeuInimigo» : ModNPC
     }
 }
 ` },
-  { group: "Mundo", prefix: "btile", loc: "Tiles", keys: "bloco tile block colocavel", title: "Bloco", desc: "Bloco sólido. Crie um item que coloque este bloco.", folder: "Content/Tiles", cls: "MeuBloco", texture: true, body: `using Microsoft.Xna.Framework;
+  { group: "Mundo", prefix: "btile", loc: "Tiles", keys: "bloco tile block colocavel", title: "Bloco", desc: "Bloco sólido. Crie um item que coloque este bloco.", folder: "Content/Tiles", cls: "MeuBloco", texture: true, body: `using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -262,7 +262,7 @@ public class «1:MeuBloco» : ModTile
     }
 }
 ` },
-  { group: "Mundo", prefix: "bwall", loc: "Walls", keys: "parede wall", title: "Parede", desc: "Parede que conta como casa.", folder: "Content/Walls", cls: "MinhaParede", texture: true, body: `using Microsoft.Xna.Framework;
+  { group: "Mundo", prefix: "bwall", loc: "Walls", keys: "parede wall", title: "Parede", desc: "Parede que conta como casa.", folder: "Content/Walls", cls: "MinhaParede", texture: true, body: `using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 

@@ -166,7 +166,7 @@ def parse_enum(body: str) -> list[dict]:
 
 # Tipos gerados do jogo: membros so conhecidos pelo uso no ExampleMod.
 GENERATED = {"Item": "Terraria", "Projectile": "Terraria", "NPC": "Terraria", "Player": "Terraria", "Main": "Terraria",
-             "Dust": "Terraria", "Vector2": "Microsoft.Xna.Framework", "Color": "Microsoft.Xna.Framework",
+             "Dust": "Terraria", "Vector2": "Microsoft.Xna.Framework", "Color": "Microsoft.Xna.Framework.Graphics",
              "Rectangle": "Microsoft.Xna.Framework", "MathHelper": "Microsoft.Xna.Framework"}
 ID_CLASSES = ("ItemID", "TileID", "BuffID", "ProjectileID", "NPCID", "DustID", "SoundID", "ItemUseStyleID",
               "ItemRarityID", "ProjAIStyleID", "NPCAIStyleID", "WallID", "AmmoID", "NPCHitSound")

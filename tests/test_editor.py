@@ -173,6 +173,10 @@ def test_member_references(page) -> None:
       return bad;
     }""")
     check(not missing, "membros citados nos modelos existem", missing)
+    # No Bunny, Color fica em Microsoft.Xna.Framework.Graphics (ProxyGen/types.txt); o ExampleMod usa assim.
+    wrong = page.evaluate("""() => window.bunnyStudio.snippets.filter(s => s.body.includes('new Color(') && !s.body.includes('using Microsoft.Xna.Framework.Graphics;')).map(s => s.prefix)""")
+    check(not wrong, "modelos com Color usam o namespace certo", wrong)
+    check(page.evaluate("window.bunnyStudio.sdk.types.Color.ns") == "Microsoft.Xna.Framework.Graphics", "indice sabe o using de Color")
 
 
 def test_stress_mod(page) -> None:
@@ -551,7 +555,7 @@ def test_ui(browser, url: str, shots: Path | None) -> None:
     page.keyboard.press("Escape")
     value = page.input_value("#src")
     check(value.count("using Terraria.ModLoader;") == 1 and value.count("namespace ") == 1, "nao repete cabecalho", value[:120])
-    check(value.startswith("using Microsoft.Xna.Framework;"), "adiciona using que falta", value[:80])
+    check(value.startswith("using Microsoft.Xna.Framework.Graphics;"), "adiciona using que falta", value[:80])
     errs = page.evaluate("window.bunnyStudio.quickCheck(files()).filter(p => p.sev === 'error')")
     check(not errs, "blocos inseridos passam na verificacao", errs[:4])
 

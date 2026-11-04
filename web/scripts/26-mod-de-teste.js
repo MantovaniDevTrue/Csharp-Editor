@@ -94,9 +94,10 @@ async function testModels() {
   showOutput("running", "Testando os modelos…", (out) => out.append(para("Compila cada modelo com a API do Bunny instalado.")));
   const result = await compileWithRoslyn(payloadOf(snippetProbeMod().files, "SnippetProbe"));
   const errors = result.errors || [];
+  if (errors.length) await loadRoslynPt();
   if (result.code > 0) { showOutput("ok", `Os ${ALL_SNIPPETS.length} modelos compilam com este Bunny`, (out) => out.append(para(engine.bunny?.version ? `Bunny ${engine.bunny.version}.` : ""))); return; }
   if (result.code < -1 || !errors.length) { showOutput("fail", "Não deu para testar os modelos", (out) => out.append(para(String(result.diagnostics || "")))); return; }
-  showOutput("fail", `${plural(errors.length, "erro", "erros")} nos modelos`, (out) => { out.append(para("Mande este resultado para quem cuida do app.")); out.append(logBlock(errors.join("\n"))); });
+  showOutput("fail", `${plural(errors.length, "erro", "erros")} nos modelos`, (out) => { out.append(para("Mande este resultado para quem cuida do app.")); out.append(logBlock(readableReport({ errors }))); });
 }
 async function newStressMod() {
   const r = await ask({ title: "Mod de teste", text: "Gera itens, armas, projéteis, buffs e acessórios para medir a compilação. Não use esse mod em um mundo de verdade.", fields: [{ name: "count", label: "Arquivos .cs (o Bunny aceita até 4096)", value: "1000" }], ok: "Gerar" });
