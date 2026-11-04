@@ -1,0 +1,33 @@
+name: Prints do README
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  prints:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Montar a interface com as fontes
+        run: |
+          mkdir -p build/site
+          python3 -c "import sys, pathlib; sys.path.insert(0, 'tools'); import build_web; pathlib.Path('build/site/index.html').write_text(build_web.page_html(), encoding='utf-8')"
+          python3 tools/bundle_fonts.py build/site
+
+      - name: Tirar os prints
+        run: |
+          pip install --quiet playwright
+          python3 -m playwright install --with-deps chromium
+          python3 tools/make_prints.py build/site docs/prints
+
+      - name: Guardar no repositorio
+        run: |
+          git config user.name "Mantovani"
+          git config user.email "312301472+MantovaniDevTrue@users.noreply.github.com"
+          git add docs/prints
+          git diff --cached --quiet || { git commit -m "Atualizar os prints do README"; git push; }

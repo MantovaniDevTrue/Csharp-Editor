@@ -4,24 +4,49 @@ Editor de código para Android que escreve e compila mods C# do [Bunny Loader](h
 
 Criado por [Mantovani](https://github.com/MantovaniDevTrue).
 
-O app se chama **Bunny C# Studio**. Ele compila com o Roslyn e a API do Bunny instalado no aparelho, então o Bunny Loader precisa estar instalado.
+O app se chama **Bunny C# Studio**.
 
 ## Baixar
 
-O GitHub Actions publica o APK a cada push em `main`: [BunnyCSharpStudio.apk](https://github.com/MantovaniDevTrue/Csharp-Editor/releases/download/editor-latest/BunnyCSharpStudio.apk)
+[**Baixar o APK**](https://github.com/MantovaniDevTrue/Csharp-Editor/releases/download/editor-latest/BunnyCSharpStudio.apk), publicado a cada mudança no app. Precisa do Android 8.0 ou mais novo e do Bunny Loader instalado para compilar.
 
-Precisa do Android 8.0 ou mais novo.
+## Prints
 
-## O que ele faz
+| Projeto | Arquivos | Código | Autocomplete |
+|---|---|---|---|
+| <img src="docs/prints/projeto.png" width="200"> | <img src="docs/prints/arquivos.png" width="200"> | <img src="docs/prints/codigo.png" width="200"> | <img src="docs/prints/autocomplete.png" width="200"> |
 
-- Editor com destaque de C#, autocomplete da API do Bunny e modelos prontos de itens, armas, NPCs, blocos e sistemas.
-- Busca e substituição no mod inteiro, com expressão regular e desfazer.
-- Compilação com os erros em português, mostrando o que foi escrito, o motivo e como deveria ficar.
-- Conferência do `manifest.json` com as regras do Bunny.
-- Exportação do pacote `.bl` e envio para o Bunny.
-- Editor de texturas em pixel, com camadas, quadros, formas, seleção, espelho e paleta.
-- Pacotes de texturas e de fontes, com gerador de fontes a partir de um `.ttf`.
-- Tutorial opcional, configurações do editor e cenário animado.
+| Modelos | Erros explicados | Buscar no mod | Textura |
+|---|---|---|---|
+| <img src="docs/prints/modelos.png" width="200"> | <img src="docs/prints/erros.png" width="200"> | <img src="docs/prints/busca.png" width="200"> | <img src="docs/prints/textura.png" width="200"> |
+
+## Funções
+
+### Código
+- Destaque de C#, barra de símbolos e várias abas de arquivos abertos.
+- Autocomplete com a API do Bunny instalado: classes, membros, overrides, `using` e classes do seu mod.
+- Modelos prontos que nascem de uma palavra: digite `espada` e a classe inteira aparece.
+- Busca e substituição no arquivo ou no mod inteiro, com palavra inteira, regex e desfazer.
+
+### Compilação
+- Compila no celular, com o Roslyn e o compilador do Bunny Loader.
+- Erros em português: o que você escreveu, o motivo e como deveria ficar.
+- **Corrigir agora** nos erros que têm uma única resposta certa.
+- Conferência do `manifest.json` com as regras do Bunny antes de compilar.
+
+### Texturas
+- Editor em pixel com lápis, borracha, balde, linha, retângulo, círculo, seleção e conta-gotas.
+- Camadas, quadros de animação, espelho, paleta, prévia e zoom com dois dedos.
+
+### Pacotes e fontes
+- Mods em C#, pacotes de texturas e pacotes de fontes.
+- Gerador das cinco fontes do jogo a partir de um `.ttf` ou `.otf`.
+- Ícone do mod, importação e exportação de `.bl`, e envio para o Bunny.
+
+### App
+- Barra lateral de arquivos, no estilo de um editor de PC.
+- Configurações do editor, tutorial opcional e cenário animado.
+- Layout testado em telas de 280 a 1280 pixels de largura.
 
 ## Organização
 
@@ -51,6 +76,7 @@ web/                    Interface mostrada dentro do app
     testes/             Mods usados nos testes do app
 tools/                  Build da interface, índice da API e traduções
 tests/                  Testes da interface e teste no emulador
+docs/prints/            Prints deste README, gerados pelo workflow "Prints do README"
 bunny-upstream.txt      Commit do Bunny Loader usado no build
 ```
 
