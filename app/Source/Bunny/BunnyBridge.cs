@@ -69,7 +69,7 @@ public sealed class BunnyBridge
             return "not_installed";
         }
         if (ConnectIntent().ResolveActivity(manager) == null) return "outdated";
-        return manager.CheckSignatures(context.PackageName!, Package) == Signature.Match ? "ready" : "wrong_signature";
+        return manager.CheckSignatures(context.PackageName!, Package) == SignatureResult.Match ? "ready" : "wrong_signature";
     }
 
     public string StatusJson() => JsonSerializer.Serialize(new Dictionary<string, object> { ["status"] = Status(), ["connected"] = Tree != null });
