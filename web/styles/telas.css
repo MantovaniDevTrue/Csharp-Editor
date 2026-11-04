@@ -16,3 +16,7 @@ dialog { max-width: 100vw; max-height: 100dvh; }
   #filesPane { overflow-y: auto; }
   #filesPane .explorer { flex: none; min-height: 300px; }
 }
+/* A barra de ferramentas do código rola em vez de cortar o último botão. */
+.ed-head, .ed-head .tools { min-width: 0; }
+.ed-head .tools { overflow-x: auto; scrollbar-width: none; }
+.ed-head .tools > * { flex: none; }
