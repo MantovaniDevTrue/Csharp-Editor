@@ -17,7 +17,7 @@ public sealed record BunnyInstall(string Package, string Version, long Updated, 
 /// </summary>
 public static class BunnyPackage
 {
-    public static readonly string[] Packages = { "com.bunnyloader", "com.bunnyloader.bench" };
+    public static readonly string[] Packages = { "com.bunnyloader", "com.bunnyloader.beta", "com.bunnyloader.bench" };
     /// <summary>Pede ao Bunny para instalar e ativar um pacote, com a confirmacao dele.</summary>
     public const string ImportAction = "dev.bunnyloader.action.IMPORT_PACKAGE";
     private const string AssetFolder = "assets/dotnet/";

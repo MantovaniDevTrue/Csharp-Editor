@@ -237,7 +237,7 @@ def test_ui(browser, url: str, shots: Path | None) -> None:
     page.click('#iconRemove')
     page.click('#dlgOk')
     page.wait_for_function("files()['icon.png'] === undefined")
-    check(page.locator('#modIcon').is_hidden(), "remover tira o icone do cartao")
+    check(page.locator('#modIcon').get_attribute("data-empty") == "true", "remover tira o icone do cartao")
 
     # Editor de texturas: ferramentas, camadas, quadros e o PNG final.
     page.click('#newTexture')
@@ -329,7 +329,7 @@ def test_ui(browser, url: str, shots: Path | None) -> None:
         page.wait_for_timeout(250)
         page.click("#tourNext")
         steps += 1
-    check(steps == 11 and page.locator("#tour").count() == 0, "tutorial termina", steps)
+    check(steps == 14 and page.locator("#tour").count() == 0, "tutorial termina", steps)
 
     # Mod grande: pastas recolhidas e busca.
     # Palavra no arquivo vazio: usa o nome do arquivo, cria textura e mostra a previa.
@@ -510,12 +510,13 @@ def test_engine(browser, url: str) -> None:
     page.wait_for_function("files()['MeuMod.cs'] !== undefined")
     # Pasta do Bunny: conecta, salva e reabre o projeto.
     page.evaluate("window.bunnyStudio.onBack(); setView('files')")
+    check(page.locator('#modFolder').is_hidden(), "pasta do Bunny fica escondida sem conexao")
+    page.evaluate("connectBunny()")
+    page.wait_for_selector('#saveFolder')
     page.click('#saveFolder')
-    page.wait_for_selector('#dlgOk')
-    page.click('#dlgOk')
     page.wait_for_function("window.__folder && window.__folder['MeuMod']")
     check(page.evaluate("Object.keys(window.__folder.MeuMod).includes('MeuMod.cs') && !!window.__folder.MeuMod['Content/Items/StarterMaterial.png'].b"), "grava texto e imagem na pasta do Bunny")
-    page.evaluate("window.__folder = null")
+    page.evaluate("window.__folder = null; renderModCard()")
     page.evaluate("window.__noBunny = true; files()['MeuMod.cs'] += ' '")
     page.click("#compile")
     page.wait_for_function("document.querySelector('#outState').textContent.includes('Instale o Bunny')")

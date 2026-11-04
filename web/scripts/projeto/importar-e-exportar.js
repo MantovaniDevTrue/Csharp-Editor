@@ -1,7 +1,7 @@
 // ---------- Importar e exportar ----------
 let downloads = null;
 if (window.claude?.use) window.claude.use("downloads").then((d) => { downloads = d; setExportLabel(); }).catch(() => {});
-function setExportLabel() { $("exportBtn").textContent = downloads ? "Exportar .zip" : "Exportar .bl"; }
+function setExportLabel() { $("exportBtn").querySelector("span").textContent = downloads ? "Exportar .zip" : "Exportar .bl"; }
 
 async function saveFile(filename, bytes) {
   if (window.BunnyAndroid) {

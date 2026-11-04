@@ -3,6 +3,7 @@ nucleo/dados.js
 cenario/cenario.js
 nucleo/configuracoes.js
 nucleo/utilidades.js
+nucleo/icones.js
 csharp/lexer.js
 csharp/indice-api.js
 csharp/manifest.js

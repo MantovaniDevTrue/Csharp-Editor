@@ -20,10 +20,10 @@ namespace BunnyStudio;
 /// </summary>
 public sealed class BunnyBridge
 {
-    public const string Package = "com.bunnyloader";
-    private const string DocumentsAuthority = "com.bunnyloader.documents";
+    // O beta do Bunny tem pacote proprio, e o provider dele segue esse nome.
+    private string Package => BunnyPackage.Find(context)?.Package ?? BunnyPackage.Packages[0];
+    private string DocumentsAuthority => Package + ".documents";
     private const string RootId = "mod-sources";
-    private const string Bridge = "content://com.bunnyloader.editorbridge";
     private const string BridgeActivity = "dev.bunnyloader.EditorBridgeActivity";
     private const string ConnectAction = "com.bunnyloader.action.CONNECT_EDITOR";
     private const string PrefsName = "bunny-bridge";
@@ -74,7 +74,7 @@ public sealed class BunnyBridge
 
     public string StatusJson() => JsonSerializer.Serialize(new Dictionary<string, object> { ["status"] = Status(), ["connected"] = Tree != null });
 
-    private static Intent ConnectIntent()
+    private Intent ConnectIntent()
     {
         var intent = new Intent(ConnectAction);
         intent.SetComponent(new ComponentName(Package, BridgeActivity));
@@ -239,7 +239,7 @@ public sealed class BunnyBridge
 
     private string Install(string name)
     {
-        Bundle? reply = context.ContentResolver!.Call(Android.Net.Uri.Parse(Bridge)!, "install", name, null);
+        Bundle? reply = context.ContentResolver!.Call(Android.Net.Uri.Parse($"content://{Package}.editorbridge")!, "install", name, null);
         if (reply == null) throw new InvalidOperationException("O Bunny nao respondeu.");
         bool ok = reply.GetBoolean("ok");
         return JsonSerializer.Serialize(new Dictionary<string, object> { ["ok"] = ok, ["error"] = reply.GetString("error") ?? "" });

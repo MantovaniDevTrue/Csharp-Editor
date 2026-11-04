@@ -19,7 +19,7 @@ const BRIDGE_TEXT = {
 };
 function connectBunny() {
   return new Promise((resolve) => {
-    bridge.onConnect = resolve;
+    bridge.onConnect = (ok) => { renderModCard(); resolve(ok); };
     window.BunnyAndroid.connectBunny();
   });
 }

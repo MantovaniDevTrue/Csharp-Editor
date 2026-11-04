@@ -23,3 +23,11 @@ dialog { max-width: 100vw; max-height: 100dvh; }
 .ed-head, .ed-head .tools { min-width: 0; }
 .ed-head .tools { overflow-x: auto; scrollbar-width: none; }
 .ed-head .tools > * { flex: none; }
+.tourcard { max-height: calc(100dvh - 12px); overflow-y: auto; }
+@media (max-width: 319px) {
+  .modcard .btn { font-size: 12.5px; gap: 5px; padding: 0 5px; }
+  .modcard .btn .pxi { width: 15px; height: 15px; }
+}
+@media (max-height: 520px) and (min-width: 480px) {
+  .modcard .modgrid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}

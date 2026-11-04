@@ -6,6 +6,7 @@
     <uses-permission android:name="com.bunnyloader.permission.EDITOR" />
     <queries>
         <package android:name="com.bunnyloader" />
+        <package android:name="com.bunnyloader.beta" />
         <package android:name="com.bunnyloader.bench" />
     </queries>
     <application

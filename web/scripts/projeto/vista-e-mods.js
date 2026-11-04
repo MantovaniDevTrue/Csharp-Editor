@@ -40,15 +40,15 @@ function renderModsWindow() {
     onLongPress(main, () => modMenu(m), row);
     const control = (label, text, className, action, disabled) => {
       const b = document.createElement("button");
-      b.type = "button"; b.className = "ctl " + className; b.textContent = text; b.setAttribute("aria-label", `${label} ${info.name || ""}`); b.disabled = !!disabled;
+      b.type = "button"; b.className = "ctl " + className; b.innerHTML = icon(text); b.setAttribute("aria-label", `${label} ${info.name || ""}`); b.disabled = !!disabled;
       b.addEventListener("click", action);
       return b;
     };
     row.append(main,
-      control("Subir", "↑", "", () => reorderMod(m.uid, -1), i === 0),
-      control("Descer", "↓", "", () => reorderMod(m.uid, 1), i === list.length - 1),
-      control("Mais opções para", "⋮", "", () => modMenu(m)),
-      control("Apagar", "✕", "x", () => deleteMod(m)));
+      control("Subir", "up", "", () => reorderMod(m.uid, -1), i === 0),
+      control("Descer", "down", "", () => reorderMod(m.uid, 1), i === list.length - 1),
+      control("Mais opções para", "dots", "", () => modMenu(m)),
+      control("Apagar", "close", "x", () => deleteMod(m)));
     rows.append(row);
   });
   const foot = document.createElement("div");
@@ -109,13 +109,13 @@ function openSheet({ title, subtitle, items }) {
   h.textContent = title;
   if (subtitle) { const small = document.createElement("small"); small.textContent = subtitle; h.append(small); }
   const close = document.createElement("button");
-  close.className = "closex"; close.type = "button"; close.textContent = "✕"; close.setAttribute("aria-label", "Fechar");
+  close.className = "closex"; close.type = "button"; close.innerHTML = icon("close"); close.setAttribute("aria-label", "Fechar");
   close.addEventListener("click", () => dlg.close());
   head.append(h, close);
   box.replaceChildren(head, ...items.map((item) => {
     const b = document.createElement("button");
     b.type = "button"; b.className = "sheetitem" + (item.danger ? " danger" : "");
-    b.innerHTML = `<span class="g">${esc(item.glyph || "")}</span>${esc(item.label)}`;
+    b.innerHTML = `<span class="g">${sheetGlyph(item.glyph)}</span><span>${esc(item.label)}</span>`;
     b.addEventListener("click", () => { dlg.close(); haptic("tap"); item.action(); });
     return b;
   }));

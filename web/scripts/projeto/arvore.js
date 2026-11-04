@@ -67,7 +67,7 @@ function renderTree() {
       row.append(pin);
     }
     const more = document.createElement("button");
-    more.className = "more"; more.type = "button"; more.textContent = "⋮"; more.setAttribute("aria-label", "Opções de " + name.textContent);
+    more.className = "more"; more.type = "button"; more.innerHTML = icon("dots"); more.setAttribute("aria-label", "Opções de " + name.textContent);
     more.addEventListener("click", () => { haptic("tap"); fileMenu(path); });
     row.append(more);
     return row;
@@ -87,7 +87,7 @@ function renderTree() {
       row.setAttribute("aria-expanded", String(!closed));
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.innerHTML = `<span class="caret">▶</span><svg class="foldericon" viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M1 3h6v2h8v9H1z"/></svg><span class="name">${esc(dir.name)}</span><span class="n">${dir.count}</span>`;
+      btn.innerHTML = `<span class="caret">${icon("caret")}</span><svg class="foldericon" viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M1 3h6v2h8v9H1z"/></svg><span class="name">${esc(dir.name)}</span><span class="n">${dir.count}</span>`;
       btn.addEventListener("click", () => {
         state.touchedDirs.add(key);
         if (closed) collapsed.delete(key); else collapsed.add(key);

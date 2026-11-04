@@ -19,15 +19,17 @@ function closeDrawer() {
   return true;
 }
 function renderModCard() {
-  const showBridge = !!window.BunnyAndroid?.bridgeStatus;
-  $("saveFolder").hidden = !showBridge; $("openFolder").hidden = !showBridge;
+  // A pasta do Bunny só aparece depois de conectada, em Configurações.
+  refreshBridge();
+  $("modFolder").hidden = !bridge.connected;
   $("fontBtn").hidden = packTypeOf(files()) !== "font";
   const m = manifestOf(mod());
   const status = manifestStatus(mod());
   $("modName").textContent = m.name || "Mod sem nome";
   const iconBytes = files()["icon.png"];
-  $("modIcon").hidden = !iconBytes;
-  if (iconBytes) $("modIcon").src = pngUrl(iconBytes);
+  $("modIcon").dataset.empty = String(!iconBytes);
+  if (iconBytes) { const img = document.createElement("img"); img.alt = ""; img.src = pngUrl(iconBytes); $("modIcon").replaceChildren(img); }
+  else $("modIcon").innerHTML = icon("texture");
   $("modMeta").textContent = `${m.id || "sem id"} · v${m.version || "?"}`;
   $("modSummary").textContent = m.summary || "";
   $("modSelectName").textContent = m.name || "Mod sem nome";

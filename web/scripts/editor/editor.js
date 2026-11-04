@@ -231,7 +231,7 @@ function renderOpenTabs() {
     tab.append(go);
     if (order.length > 1) {
       const x = document.createElement("button");
-      x.type = "button"; x.className = "x"; x.textContent = "✕"; x.setAttribute("aria-label", "Fechar " + go.textContent);
+      x.type = "button"; x.className = "x"; x.innerHTML = icon("close"); x.setAttribute("aria-label", "Fechar " + go.textContent);
       x.addEventListener("click", () => {
         state.open = state.open.filter((p) => p !== path);
         if (path === state.active) openFile(state.open[0]); else renderOpenTabs();

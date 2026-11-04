@@ -154,7 +154,7 @@ function pxPickReplacement() {
 // ----- Painel de camadas.
 function pxLayersPanel(box) {
   box.innerHTML = `<h3>Camadas</h3><div id="pxLayerList"></div>
-    <div class="txrow"><button class="txbtn" data-l="add" type="button">Nova</button><button class="txbtn" data-l="dup" type="button">Duplicar</button><button class="txbtn" data-l="up" type="button" aria-label="Subir">▲</button><button class="txbtn" data-l="down" type="button" aria-label="Descer">▼</button></div>
+    <div class="txrow"><button class="txbtn" data-l="add" type="button">Nova</button><button class="txbtn" data-l="dup" type="button">Duplicar</button><button class="txbtn" data-l="up" type="button" aria-label="Subir">${icon("up")}</button><button class="txbtn" data-l="down" type="button" aria-label="Descer">${icon("down")}</button></div>
     <div class="txrow"><button class="txbtn" data-l="merge" type="button">Juntar abaixo</button><button class="txbtn" data-l="name" type="button">Renomear</button><button class="txbtn danger" data-l="del" type="button">Apagar</button></div>
     <div class="txrow"><label for="pxLayerOp">Opacidade</label><input type="range" id="pxLayerOp" min="0" max="255" value="${px.layers[px.active].opacity}"></div>`;
   const list = $("pxLayerList");

@@ -4,6 +4,9 @@ const TOUR = [
   { view: "files", target: ".modcard", title: "Dados do mod", text: "Nome, versão e autor ficam aqui, sem precisar mexer no JSON. Também é aqui que você importa, exporta e envia para o Bunny." },
   { view: "code", target: "#menuBtn", title: "Barra lateral", text: "Os três traços abrem os arquivos em qualquer tela. A pasta do arquivo aberto fica marcada em dourado." },
   { view: "files", target: "#tree", title: "Arquivos", text: "O manifest.json fica sempre no topo. Toque em um arquivo para abrir, ou segure em um arquivo ou pasta para ver mais opções." },
+  { view: "files", target: "#modSearchBtn", title: "Buscar no mod", text: "Procura e substitui em todos os arquivos de texto, com opção de desfazer. Tocar em um resultado abre o arquivo naquela linha." },
+  { view: "files", target: "#newTexture", title: "Editor de texturas", text: "Toque em um PNG ou em + Textura. Tem lápis, formas, seleção, espelho, camadas e quadros de animação. Dois dedos movem a tela e dão zoom." },
+  { view: "files", target: "#newMod", title: "Texturas e fontes", text: "Em Novo mod, escolha um pacote de texturas ou de fontes. No de fontes, Gerar fonte de um .ttf cria as cinco fontes do jogo, e dá para retocar as letras tocando nas folhas PNG." },
   { view: "snips", target: "#snips", title: "Modelos prontos", text: "Espadas, armas, armaduras, NPCs e C# comum, no estilo do tModLoader. Toque em um para ver o código antes de usar." },
   { view: "code", target: "#ed", title: "O editor", text: "Em um arquivo vazio, digite uma palavra como espada ou receita no começo da linha. A classe inteira aparece em uma prévia. Toque para inserir." },
   { view: "code", target: "#keys", title: "Teclas de código", text: "Símbolos que dão trabalho no teclado do celular. O Tab insere o que está sugerido e pula para o próximo campo de um modelo." },
@@ -47,6 +50,8 @@ function drawTour() {
   $("tourText").textContent = step.text;
   $("tourBack").disabled = tourIndex === 0;
   $("tourNext").textContent = tourIndex === TOUR.length - 1 ? "Concluir" : "Próximo";
+  // Em tela pequena o alvo pode estar fora da área visível.
+  target.scrollIntoView({ block: "nearest" });
   // Mede depois que a tela nova terminou de entrar.
   requestAnimationFrame(() => setTimeout(() => {
     if (tourIndex < 0) return;
@@ -59,7 +64,7 @@ function drawTour() {
     const below = innerHeight - bottom, above = top;
     // Fica onde há mais espaço; se o alvo ocupa a tela, sobrepõe a parte de baixo dele.
     const y = below >= cardH + 16 ? bottom + 10 : above >= cardH + 16 ? top - cardH - 10 : Math.max(10, innerHeight - cardH - 90);
-    card.style.top = y + "px";
+    card.style.top = Math.max(6, Math.min(y, innerHeight - cardH - 6)) + "px";
   }, settings.anims ? 220 : 0));
 }
 function inviteTour() {

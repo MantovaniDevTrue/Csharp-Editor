@@ -92,3 +92,33 @@ dialog.page[open] { animation: pagein .22s cubic-bezier(.2,1,.4,1); }
 .msgo code { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: 12.5px var(--f-code); }
 .msgo mark { color: #1c1400; background: var(--gold); }
 .msmore { padding: 10px 12px; margin: 0; color: var(--muted); font-size: 13px; }
+/* Ícones em pixel e menus */
+.pxi { width: 1.25em; height: 1.25em; flex: none; display: inline-block; vertical-align: -.25em; }
+.sheethead h2 { font-size: 20px; }
+.sheethead small { font-size: 13px; }
+.closex { display: grid; place-items: center; color: #fff; font-size: 14px; }
+.sheetitem { min-height: 58px; gap: 14px; padding: 8px 16px; font: 500 17px var(--f-pixel); color: var(--ink); text-align: left; }
+.sheetitem .g { flex: none; width: 36px; height: 36px; display: grid; place-items: center; color: var(--gold); background: var(--slot); clip-path: var(--px); box-shadow: inset 0 0 0 2px var(--slot-line); font: 700 15px var(--f-pixel); }
+.sheetitem .g .pxi { width: 22px; height: 22px; }
+.sheetitem.danger, .sheetitem.danger .g { color: var(--life); }
+.modrow .ctl { display: grid; place-items: center; font-size: 15px; }
+/* Cartão do mod: identidade, ação principal, ações do dia a dia e o resto. */
+.modcard { display: flex; flex-direction: column; gap: 10px; }
+.modhead { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.modicon { float: none; margin: 0; flex: none; width: 56px; height: 56px; padding: 4px; display: grid; place-items: center; background: var(--slot); clip-path: var(--px); box-shadow: inset 0 0 0 2px var(--slot-line); color: var(--muted); border: 0; }
+.modicon img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+.modicon[data-empty="true"] .pxi { width: 26px; height: 26px; }
+.modid { flex: 1; min-width: 0; }
+.modcard h1 { font-size: 19px; }
+.modsum { margin: 0; }
+.modacts, .modgrid { display: grid; gap: 8px; margin: 0; }
+.modgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.modcard .btn { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 10px; font: 500 14.5px var(--f-pixel); min-width: 0; white-space: nowrap; }
+.modcard .btn > span { overflow: hidden; text-overflow: ellipsis; }
+.modcard .btn .pxi { width: 18px; height: 18px; color: var(--gold); }
+.modcard .modsend { min-height: 50px; font-size: 16.5px; color: #1c1400; background: var(--gold); box-shadow: inset 0 0 0 2px #000, inset 0 -4px 0 #0003; }
+.modcard .modsend .pxi { color: #1c1400; width: 20px; height: 20px; }
+.modfolder { display: grid; gap: 6px; padding-top: 8px; border-top: 2px solid var(--slot-line); }
+.modfolder[hidden] { display: none; }
+.modfolder small { font: 500 13px var(--f-pixel); color: var(--muted); }
+.saved { margin: 0; text-align: center; }

@@ -23,7 +23,7 @@ function renderSettings() {
   const box = $("settingsBody");
   const head = document.createElement("div");
   head.className = "sheethead";
-  head.innerHTML = '<h2>Configurações</h2><button class="closex" id="settingsClose" aria-label="Fechar">✕</button>';
+  head.innerHTML = '<h2>Configurações</h2><button class="closex" id="settingsClose" aria-label="Fechar">' + icon("close") + '</button>';
   const wrap = document.createElement("div");
   wrap.className = "setwrap";
   const update = (key, value) => { settings[key] = value; saveSettings(); applySettings(); haptic("tap"); renderSettings(); };
