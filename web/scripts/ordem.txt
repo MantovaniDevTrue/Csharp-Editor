@@ -32,7 +32,10 @@ projeto/vista-e-mods.js
 telas/tutorial.js
 telas/configuracoes.js
 testes/mod-de-teste.js
-textura/editor-de-textura.js
+textura/documento.js
+textura/ferramentas.js
+textura/tela.js
+textura/paineis.js
 fontes/gerador.js
 bunny/pasta-do-bunny.js
 inicializacao.js

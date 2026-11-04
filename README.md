@@ -18,6 +18,8 @@ Precisa do Android 8.0 ou mais novo.
 - Compilação com os erros em português, mostrando o que foi escrito, o motivo e como deveria ficar.
 - Conferência do `manifest.json` com as regras do Bunny.
 - Exportação do pacote `.bl` e envio para o Bunny.
+- Editor de texturas em pixel, com camadas, quadros, formas, seleção, espelho e paleta.
+- Pacotes de texturas e de fontes, com gerador de fontes a partir de um `.ttf`.
 - Tutorial opcional, configurações do editor e cenário animado.
 
 ## Organização
@@ -40,7 +42,7 @@ web/                    Interface mostrada dentro do app
     modelos/            Modelos prontos e o painel deles
     compilador/         Compilação, explicação e correção dos erros
     projeto/            Árvore, barra lateral, mods, importar e exportar
-    textura/            Editor de texturas
+    textura/            Editor de texturas: documento, ferramentas, tela e painéis
     fontes/             Gerador de fontes
     bunny/              Conexão com a pasta do Bunny
     telas/              Tutorial e configurações

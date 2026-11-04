@@ -5,4 +5,5 @@ explorador.css
 tutorial.css
 folhas-e-paginas.css
 identidade.css
+telas.css
 editor-de-textura.css

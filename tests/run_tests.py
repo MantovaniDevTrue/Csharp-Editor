@@ -8,6 +8,7 @@ from __future__ import annotations
 from support import *  # noqa: F403
 from test_interface import *  # noqa: F403
 from test_logica import *  # noqa: F403
+from test_telas import *  # noqa: F403
 
 
 def main() -> int:
@@ -36,6 +37,7 @@ def main() -> int:
             page.close()
             test_ui(browser, plain_url, shots)
             test_engine(browser, plain_url)
+            test_screens(browser, plain_url, shots)
             browser.close()
     print(f"\n{len(failures)} falha(s)" if failures else "\nWEB_EDITOR_TESTS=PASS")
     return 1 if failures else 0

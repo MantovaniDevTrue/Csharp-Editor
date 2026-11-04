@@ -1,17 +1,70 @@
-/* Editor de texturas */
-#pixel { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: var(--panel); color: var(--ink); }
-#pixel[open] { display: flex; flex-direction: column; }
-.pxhead, .pxtools, .pxcolors { display: flex; align-items: center; gap: 6px; padding: 6px 8px; flex-wrap: wrap; }
-.pxhead { padding-top: calc(6px + env(safe-area-inset-top)); border-bottom: 2px solid var(--slot-line); }
-.pxhead b { flex: 1; min-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 700 15px var(--f-pixel); color: #fff; }
-.pxstage { flex: 1; min-height: 0; position: relative; background: #0b1424; }
+/* Editor de texturas: uma oficina em pixel, com cor própria, para se notar que é outra área */
+#pixel { --tx: #62e0c8; --txdark: #0e1a2c; --txslot: #1a2c44; --txline: #2f4a68; width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: var(--txdark); color: #dfe9f5; font-family: var(--f-pixel); overflow: hidden; }
+#pixel[open] { display: grid; grid-template: "bar bar" auto "stage stage" 1fr "options options" auto "frames frames" auto "tools tools" auto "colors colors" auto / auto 1fr; }
+#pixel button { font-family: var(--f-pixel); }
+.txbar { grid-area: bar; display: flex; align-items: center; gap: 6px; padding: calc(6px + env(safe-area-inset-top)) 8px 6px; background: var(--txslot); border-bottom: 4px solid var(--tx); box-shadow: 0 2px 0 #000; min-width: 0; }
+.txmark { flex: none; width: 24px; height: 24px; image-rendering: pixelated; background: conic-gradient(var(--tx) 25%, #16808f 0 50%, var(--tx) 0 75%, #16808f 0) 0 0 / 12px 12px; box-shadow: 0 0 0 2px #000; }
+.txtitle { flex: 1; min-width: 0; line-height: 1.1; }
+.txtitle small { display: block; font-size: 10px; letter-spacing: 2px; color: var(--tx); }
+.txtitle b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; color: #fff; }
+.txstage { grid-area: stage; position: relative; min-height: 0; min-width: 0; overflow: hidden; background: #070d18; background-image: linear-gradient(#ffffff06 2px, transparent 2px), linear-gradient(90deg, #ffffff06 2px, transparent 2px); background-size: 24px 24px; }
 #pxCanvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
-#pxInfo { position: absolute; left: 8px; top: 6px; font: 11px var(--f-code); color: var(--muted); pointer-events: none; }
-.pxtools { border-top: 2px solid var(--slot-line); }
-.pxtools .btn { min-width: 40px; min-height: 38px; padding: 0 8px; }
-.pxtools [aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--gold); color: var(--gold); }
-.pxcolors { padding-bottom: calc(8px + env(safe-area-inset-bottom)); }
-.pxcolors input[type=color] { width: 40px; height: 34px; padding: 0; border: 2px solid var(--slot-line); background: none; }
-.pxcolors input[type=range] { width: 92px; }
-#pxSwatches { display: flex; gap: 4px; overflow-x: auto; flex: 1 1 100%; padding: 2px 0; }
-.swatch { flex: none; width: 28px; height: 28px; border: 2px solid var(--slot-line); background: linear-gradient(var(--c), var(--c)), repeating-conic-gradient(#8c9bad 0 25%, #5a6b7f 0 50%) 0 0 / 10px 10px; }
+#pxInfo { position: absolute; left: 6px; bottom: 4px; padding: 1px 5px; font-size: 11px; color: #cfe; background: #000a; pointer-events: none; max-width: calc(100% - 12px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#pxPreview { position: absolute; right: 6px; top: 6px; max-width: 30%; max-height: 40%; image-rendering: pixelated; pointer-events: none; background: repeating-conic-gradient(#8c9bad 0 25%, #5a6b7f 0 50%) 0 0 / 12px 12px; box-shadow: 0 0 0 2px #000, 0 0 0 4px var(--tx); }
+.txbtn, .txtool, .txframe, .txpanelbtn { min-height: 36px; padding: 0 9px; color: #dfe9f5; font-size: 13px; background: var(--txslot); border: 0; box-shadow: inset 0 0 0 2px var(--txline), inset 0 -4px 0 #0005; white-space: nowrap; flex: none; }
+.txbtn:active, .txtool:active, .txframe:active, .txpanelbtn:active { transform: translateY(1px); box-shadow: inset 0 0 0 2px var(--txline); }
+#pixel [aria-pressed="true"] { color: #042; background: var(--tx); box-shadow: inset 0 0 0 2px #000, inset 0 -4px 0 #0003; }
+#pixel button:disabled { opacity: .4; }
+.txbtn.strong { color: #1c1400; background: var(--gold); box-shadow: inset 0 0 0 2px #000, inset 0 -4px 0 #0003; }
+.txbtn.danger { color: #ffb4ad; }
+.txoptions, .txframes { display: flex; align-items: center; gap: 5px; padding: 5px 8px; overflow-x: auto; scrollbar-width: none; background: #122136; min-width: 0; }
+.txoptions { grid-area: options; min-height: 46px; border-top: 2px solid #000; }
+.txframes { grid-area: frames; border-top: 2px solid #000; }
+.txframes[hidden] { display: none; }
+.txvalue { flex: none; font-size: 13px; color: #fff; min-width: 28px; text-align: center; }
+.txhint { font-size: 13px; color: #a9c0d6; white-space: nowrap; }
+.txframe { min-width: 36px; padding: 0 6px; }
+.txtools { grid-area: tools; display: flex; gap: 4px; padding: 5px 8px; overflow-x: auto; scrollbar-width: none; background: var(--txslot); border-top: 2px solid #000; min-width: 0; }
+.txtool { width: 42px; height: 42px; padding: 0; display: grid; place-items: center; flex: 1 0 40px; max-width: 56px; }
+.txtool svg { width: 24px; height: 24px; }
+.txcolors { grid-area: colors; display: flex; align-items: center; gap: 6px; padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); background: #122136; border-top: 2px solid #000; min-width: 0; }
+.txcolorpair { position: relative; flex: none; width: 46px; height: 42px; }
+.txcolorpair button { position: absolute; width: 28px; height: 28px; padding: 0; border: 0; box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff; background: linear-gradient(var(--c), var(--c)), repeating-conic-gradient(#8c9bad 0 25%, #5a6b7f 0 50%) 0 0 / 10px 10px; }
+#pxBack { right: 2px; bottom: 2px; }
+#pxFront { left: 4px; top: 4px; z-index: 1; }
+#pxSwatches { flex: 1; min-width: 0; display: flex; gap: 3px; overflow-x: auto; scrollbar-width: none; padding: 2px; }
+.swatch { flex: none; width: 28px; height: 28px; padding: 0; border: 0; box-shadow: inset 0 0 0 2px #0006; background: linear-gradient(var(--c), var(--c)), repeating-conic-gradient(#8c9bad 0 25%, #5a6b7f 0 50%) 0 0 / 10px 10px; }
+.txpanelbtn { padding: 0 7px; font-size: 12px; }
+#pxScrim { position: absolute; inset: 0; z-index: 2; background: #0006; }
+#pxPanel { position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; max-height: 72%; overflow-y: auto; padding: 10px 12px calc(12px + env(safe-area-inset-bottom)); background: var(--txslot); border-top: 4px solid var(--tx); box-shadow: 0 -2px 0 #000; display: flex; flex-direction: column; gap: 8px; }
+#pxPanel[hidden], #pxScrim[hidden] { display: none; }
+#pxPanel h3 { margin: 0; font-size: 16px; color: var(--tx); }
+.txtext { margin: 0; font: 13px var(--f-pixel); color: #a9c0d6; }
+.txrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; }
+.txrow input:not([type=range]) { flex: 1; min-width: 64px; min-height: 34px; padding: 0 8px; color: #fff; background: #070d18; border: 0; box-shadow: inset 0 0 0 2px var(--txline); font: 14px var(--f-code); }
+.txrow input[type=range] { flex: 1; min-width: 90px; accent-color: var(--tx); }
+#pxSV { width: min(100%, 240px); aspect-ratio: 1; max-height: 34vh; image-rendering: pixelated; touch-action: none; align-self: center; box-shadow: 0 0 0 2px #000; }
+#pxHue { width: 100%; height: 26px; flex: none; image-rendering: pixelated; touch-action: none; box-shadow: 0 0 0 2px #000; }
+.txlayer { display: flex; gap: 4px; align-items: stretch; }
+.txname { flex: 1; min-width: 0; min-height: 36px; padding: 0 8px; text-align: left; color: #dfe9f5; background: #070d18; border: 0; box-shadow: inset 0 0 0 2px var(--txline); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+.txlayer[aria-current="true"] .txname { color: #fff; box-shadow: inset 0 0 0 2px var(--tx); }
+/* Tela deitada ou grande: ferramentas de lado, para a imagem ter o máximo de espaço. */
+@media (orientation: landscape) and (max-height: 620px), (min-width: 900px) {
+  #pixel[open] { grid-template: "bar bar" auto "tools stage" 1fr "tools options" auto "tools frames" auto "tools colors" auto / auto 1fr; }
+  .txtools { flex-direction: column; flex-wrap: wrap; align-content: flex-start; overflow: auto; border-top: 0; border-right: 2px solid #000; padding: 6px; max-height: 100%; }
+  .txtool { flex: none; width: 40px; height: 40px; }
+  #pxPanel { left: auto; top: 0; bottom: 0; width: min(360px, 62vw); max-height: none; border-top: 0; border-left: 4px solid var(--tx); box-shadow: -2px 0 0 #000; }
+}
+@media (orientation: landscape) and (max-height: 420px) {
+  .txtitle small { display: none; }
+  .txoptions { min-height: 40px; }
+  .txoptions, .txframes, .txcolors { padding-top: 3px; padding-bottom: 3px; }
+  .txbtn, .txframe, .txpanelbtn { min-height: 32px; }
+  .txbar { padding-top: 3px; padding-bottom: 3px; }
+  .txcolorpair { height: 36px; }
+  .txcolorpair button { width: 22px; height: 22px; }
+}
+@media (max-width: 340px) {
+  .txmark { display: none; }
+  .txbar .txbtn { padding: 0 7px; }
+}
