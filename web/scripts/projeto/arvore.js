@@ -56,7 +56,7 @@ function renderTree() {
     const name = document.createElement("span");
     name.textContent = parts[parts.length - 1];
     open.append(name);
-    open.addEventListener("click", () => { openFile(path); setView("code"); closeDrawer(); });
+    open.addEventListener("click", () => { closeDrawer(); if (/\.png$/i.test(path) && typeof value !== "string") { openTexture(path); return; } openFile(path); setView("code"); });
     row.append(open);
     onLongPress(open, () => fileMenu(path), row);
     if (path === "manifest.json") {

@@ -55,7 +55,7 @@ jobs:
         run: |
           pip install --quiet playwright
           python3 -m playwright install --with-deps chromium
-          python3 tests/test_editor.py
+          python3 tests/run_tests.py
 
       - name: Colocar a interface e as fontes no app
         run: |

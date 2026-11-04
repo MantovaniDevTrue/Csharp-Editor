@@ -12,16 +12,18 @@ ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT / "web"
 
 
-def join(folder: str, pattern: str) -> str:
-    # O prefixo numerico define a ordem: os scripts dividem o mesmo escopo.
-    return "".join(path.read_text(encoding="utf-8") for path in sorted((WEB / folder).glob(pattern)))
+def join(folder: str) -> str:
+    # ordem.txt define a sequencia: os scripts dividem o mesmo escopo, entao a ordem importa.
+    base = WEB / folder
+    names = [line.strip() for line in (base / "ordem.txt").read_text(encoding="utf-8").splitlines()]
+    return "".join((base / name).read_text(encoding="utf-8") for name in names if name and not name.startswith("#"))
 
 
 def page_html() -> str:
     sdk = (WEB / "data/sdk-index.json").read_text(encoding="utf-8")
-    scripts = join("scripts", "*.js").replace("/*SDK_INDEX*/", "/*SDK_INDEX_START*/" + sdk + "/*SDK_INDEX_END*/", 1)
+    scripts = join("scripts").replace("/*SDK_INDEX*/", "/*SDK_INDEX_START*/" + sdk + "/*SDK_INDEX_END*/", 1)
     page = (WEB / "index.html").read_text(encoding="utf-8")
-    return page.replace("<!-- build:styles -->\n", join("styles", "*.css"), 1).replace("<!-- build:scripts -->\n", scripts, 1)
+    return page.replace("<!-- build:styles -->\n", join("styles"), 1).replace("<!-- build:scripts -->\n", scripts, 1)
 
 
 def stage(site: Path) -> None:

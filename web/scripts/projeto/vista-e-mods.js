@@ -139,6 +139,7 @@ function onLongPress(el, action, marker = el) {
 function fileMenu(path) {
   const isManifest = path === "manifest.json";
   const items = [{ glyph: "▶", label: "Abrir", action: () => { openFile(path); setView("code"); } }];
+  if (/\.png$/i.test(path)) items.unshift({ glyph: "✎", label: "Editar textura", action: () => openTexture(path) });
   if (isManifest) items.push({ glyph: "✎", label: "Editar dados do mod", action: editModData });
   else {
     items.push({ glyph: "✎", label: "Renomear", action: () => renameFile(path) });

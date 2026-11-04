@@ -42,6 +42,9 @@ async function sendToBunny() {
     toast("Corrija os erros antes de enviar.");
     return;
   }
+  // Com a pasta do Bunny conectada, o mod vai direto para ModSources.
+  refreshBridge();
+  if (bridge.connected) { await saveToBunnyFolder(true); return; }
   const m = manifestOf(mod());
   const filename = `${m.id || "mod"}-${m.version || "0"}.bl`;
   const bytes = await buildZip(files());

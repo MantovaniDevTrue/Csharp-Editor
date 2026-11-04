@@ -2,6 +2,8 @@
 <!-- Sem permissao de internet: a interface e o Roslyn vem dentro do APK. -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Para abrir o Bunny e ler a API C# do APK dele; sem isto o Android 11+ esconde o app. -->
+    <!-- A ponte do Bunny com editores: a mesma do BL Editor. -->
+    <uses-permission android:name="com.bunnyloader.permission.EDITOR" />
     <queries>
         <package android:name="com.bunnyloader" />
         <package android:name="com.bunnyloader.bench" />

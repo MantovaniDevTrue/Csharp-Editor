@@ -64,12 +64,17 @@ function renderSettings() {
   const h = document.createElement("h3"); h.textContent = "Sobre"; wrap.append(h);
   const about = document.createElement("div");
   about.className = "setrow stack";
-  about.innerHTML = '<div class="tx"><b>Tutorial</b><small>Mostra para que serve cada parte do app.</small></div><button class="btn strong" id="settingsTour" type="button">Ver o tutorial</button></div><div class="setrow stack"><div class="tx"><b>Testar os modelos</b><small>Compila todos os modelos com o Bunny instalado.</small></div><button class="btn" id="settingsProbe" type="button">Testar</button></div><div class="setrow stack"><div class="tx"><b>Bunny C# Studio</b><small>Ferramenta não oficial feita para o Bunny Loader, que é um projeto de Jonata Oliveira. O app compila com o mesmo código C# do Bunny.</small></div><button class="btn" id="settingsReset" type="button">Restaurar padrões</button>';
+  about.innerHTML = '<div class="tx"><b>Tutorial</b><small>Mostra para que serve cada parte do app.</small></div><button class="btn strong" id="settingsTour" type="button">Ver o tutorial</button></div><div class="setrow stack"><div class="tx"><b>Pasta do Bunny</b><small id="bridgeText"></small></div><button class="btn" id="settingsBridge" type="button">Conectar</button></div><div class="setrow stack"><div class="tx"><b>Testar os modelos</b><small>Compila todos os modelos com o Bunny instalado.</small></div><button class="btn" id="settingsProbe" type="button">Testar</button></div><div class="setrow stack"><div class="tx"><b>Bunny C# Studio</b><small>Ferramenta não oficial feita para o Bunny Loader, que é um projeto de Jonata Oliveira. O app compila com o mesmo código C# do Bunny.</small></div><button class="btn" id="settingsReset" type="button">Restaurar padrões</button>';
   wrap.append(about);
   const top = box.parentElement.scrollTop;
   box.replaceChildren(head, wrap);
   box.parentElement.scrollTop = top;
   $("settingsClose").addEventListener("click", () => $("settings").close());
+  refreshBridge();
+  $("bridgeText").textContent = bridge.connected ? "Conectada à pasta ModSources. " + (BRIDGE_TEXT[bridge.status] || "") : BRIDGE_TEXT[bridge.status] || "Disponível só no app para Android.";
+  $("settingsBridge").textContent = bridge.connected ? "Reconectar" : "Conectar";
+  $("settingsBridge").disabled = !window.BunnyAndroid?.bridgeStatus;
+  $("settingsBridge").addEventListener("click", async () => { $("settings").close(); const ok = await connectBunny(); toast(ok ? "Pasta do Bunny conectada." : "A pasta escolhida não é a ModSources do Bunny Loader."); });
   $("settingsTour").addEventListener("click", startTour);
   $("settingsProbe").addEventListener("click", () => { $("settings").close(); testModels(); });
   $("settingsReset").addEventListener("click", () => { Object.assign(settings, SETTING_DEFAULTS); saveSettings(); applySettings(); renderSettings(); toast("Padrões restaurados."); });
@@ -87,13 +92,20 @@ async function switchMod(uid) {
   showOutput("idle", "Nada compilado ainda.", idleOutput);
   renderModCard();
 }
-async function newMod() {
+function newMod() {
+  openSheet({ title: "O que você quer criar?", items: [
+    { glyph: "C#", label: "Mod em C#", action: () => askNewProject(null) },
+    { glyph: "▦", label: "Pacote de texturas", action: () => askNewProject("texture") },
+    { glyph: "Aa", label: "Pacote de fontes", action: () => askNewProject("font") },
+  ] });
+}
+async function askNewProject(type) {
   const r = await ask({ title: "Novo mod", text: "O UID é gerado agora; mantenha o mesmo UID nas atualizações do mod.", fields: [{ name: "name", label: "Nome", value: "Meu Mod" }, { name: "id", label: "ID (letras minúsculas, números e _)", value: "meu_mod" }], ok: "Criar", extra: "Mod de teste" });
   if (!r) return;
   if (r.extra) { await newStressMod(); return; }
   if (!MOD_ID_RE.test(r.id)) { toast("O ID vira o nome da classe do mod: use letras, números ou _, começando por letra."); return; }
   if (!r.name || r.name.length > 100) { toast("Dê um nome de até 100 caracteres."); return; }
-  const m = starterMod(r.id, r.name);
+  const m = type ? starterPack(type, r.id, r.name) : starterMod(r.id, r.name);
   state.mods[m.uid] = m;
   await switchMod(m.uid);
   scheduleSave();

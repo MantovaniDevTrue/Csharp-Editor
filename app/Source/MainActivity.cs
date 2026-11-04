@@ -22,11 +22,12 @@ public class MainActivity : Activity
 {
     private const string Tag = "BunnyStudio";
     private const string Origin = "https://appassets.androidplatform.net";
-    private const int SaveRequest = 1, OpenRequest = 2;
+    private const int SaveRequest = 1, OpenRequest = 2, ConnectRequest = 3;
     private static bool rendererCrashed;
 
     private WebView web = null!;
     private CompilerHost compiler = null!;
+    private BunnyBridge bunnyBridge = null!;
     private string? sdkIndexFile;
     private Android.Net.Uri? lastSavedPackage;
     private byte[]? pendingSave;
@@ -38,6 +39,8 @@ public class MainActivity : Activity
         base.OnCreate(savedInstanceState);
         compiler = new CompilerHost(this, (id, result) => RunOnUiThread(() =>
             web.EvaluateJavascript($"window.bunnyStudio?.onNativeCompile({id},{JSONObject.Quote(result)})", null)));
+        bunnyBridge = new BunnyBridge(this, (id, result) => RunOnUiThread(() =>
+            web.EvaluateJavascript($"window.bunnyStudio?.onBridge({id},{JSONObject.Quote(result)})", null)));
         new System.Threading.Thread(PrepareSdkIndex) { IsBackground = true, Name = "BunnySdkIndex" }.Start();
 
         web = new WebView(this);
@@ -94,6 +97,14 @@ public class MainActivity : Activity
     protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent? data)
     {
         base.OnActivityResult(requestCode, resultCode, data);
+        if (requestCode == ConnectRequest)
+        {
+            bool accepted = false;
+            try { accepted = resultCode == Result.Ok && bunnyBridge.Accept(data?.Data); }
+            catch (Exception error) { Log.Error(Tag, "Falha ao conectar a pasta do Bunny: " + error); }
+            web.EvaluateJavascript($"window.bunnyStudio?.onBunnyConnected({(accepted ? "true" : "false")})", null);
+            return;
+        }
         if (requestCode == SaveRequest)
         {
             string status = "cancelled";
@@ -233,6 +244,23 @@ public class MainActivity : Activity
             }
             return false;
         }
+
+        [JavascriptInterface, Export("bridgeStatus")]
+        public string BridgeStatus() => activity.bunnyBridge.StatusJson();
+
+        [JavascriptInterface, Export("bridgeCall")]
+        public void BridgeCall(int id, string op, string json) => activity.bunnyBridge.Enqueue(id, op, json);
+
+        [JavascriptInterface, Export("connectBunny")]
+        public void ConnectBunny() => activity.RunOnUiThread(() =>
+        {
+            try { activity.StartActivityForResult(activity.bunnyBridge.PickIntent(), ConnectRequest); }
+            catch (Exception error)
+            {
+                Log.Error(Tag, "Falha ao abrir a conexao: " + error);
+                activity.web.EvaluateJavascript("window.bunnyStudio?.onBunnyConnected(false)", null);
+            }
+        });
 
         [JavascriptInterface, Export("bunnyInfo")]
         public string BunnyInfo()

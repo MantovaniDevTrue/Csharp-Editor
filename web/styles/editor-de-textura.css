@@ -1,0 +1,17 @@
+/* Editor de texturas */
+#pixel { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: var(--panel); color: var(--ink); }
+#pixel[open] { display: flex; flex-direction: column; }
+.pxhead, .pxtools, .pxcolors { display: flex; align-items: center; gap: 6px; padding: 6px 8px; flex-wrap: wrap; }
+.pxhead { padding-top: calc(6px + env(safe-area-inset-top)); border-bottom: 2px solid var(--slot-line); }
+.pxhead b { flex: 1; min-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 700 15px var(--f-pixel); color: #fff; }
+.pxstage { flex: 1; min-height: 0; position: relative; background: #0b1424; }
+#pxCanvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+#pxInfo { position: absolute; left: 8px; top: 6px; font: 11px var(--f-code); color: var(--muted); pointer-events: none; }
+.pxtools { border-top: 2px solid var(--slot-line); }
+.pxtools .btn { min-width: 40px; min-height: 38px; padding: 0 8px; }
+.pxtools [aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--gold); color: var(--gold); }
+.pxcolors { padding-bottom: calc(8px + env(safe-area-inset-bottom)); }
+.pxcolors input[type=color] { width: 40px; height: 34px; padding: 0; border: 2px solid var(--slot-line); background: none; }
+.pxcolors input[type=range] { width: 92px; }
+#pxSwatches { display: flex; gap: 4px; overflow-x: auto; flex: 1 1 100%; padding: 2px 0; }
+.swatch { flex: none; width: 28px; height: 28px; border: 2px solid var(--slot-line); background: linear-gradient(var(--c), var(--c)), repeating-conic-gradient(#8c9bad 0 25%, #5a6b7f 0 50%) 0 0 / 10px 10px; }

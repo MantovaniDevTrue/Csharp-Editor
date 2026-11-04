@@ -20,6 +20,16 @@ async function runCompile() {
       });
       return;
     }
+    // Pacote de texturas ou fontes não tem código: o Bunny só lê os arquivos.
+    const pack = packTypeOf(files());
+    if (pack) {
+      state.problems = [];
+      if (window.BunnyAndroid) $("sendBunny2").hidden = false;
+      setView("out");
+      const count = Object.keys(files()).filter((p) => (pack === "texture" ? /^Images\/.*\.png$/i : /^Fonts\/[^/]+\.json$/i).test(p)).length;
+      showOutput("ok", pack === "texture" ? "Pacote de texturas pronto" : "Pacote de fontes pronto", (out) => out.append(para(pack === "texture" ? `${plural(count, "textura", "texturas")} em Images/. Pacotes assim não têm código para compilar.` : `${plural(count, "fonte", "fontes")} em Fonts/. Pacotes assim não têm código para compilar.`)));
+      return;
+    }
     // Pacote só com a DLL: já vem compilado, e o Bunny carrega direto.
     const compiled = precompiledEntry(files());
     if (compiled && !Object.keys(files()).some((path) => isSource(path))) {

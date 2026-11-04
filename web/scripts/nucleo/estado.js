@@ -44,6 +44,11 @@ public class StarterMaterial : ModItem
     [`Localization/en-US_Mods.${id}.hjson`]: "Items: {\n\tStarterMaterial: {\n\t\tDisplayName: Starter Material\n\t\tTooltip: One material, one recipe.\n\t}\n}\n",
   } };
 }
+function starterPack(type, id, name) {
+  const uid = newUid();
+  const manifest = { uid, id, name, version: "0.1.0", authors: [{ name: "Seu nome", role: "Autor" }], type, category: type === "texture" ? "Textura" : "Utilidade", summary: "", license: "MIT", blVersion: 3, gameVersion: [301720, 301720], dependencies: [] };
+  return { uid, updated: Date.now(), files: { "manifest.json": JSON.stringify(manifest, null, 2) + "\n" } };
+}
 // Traz um mod do formato antigo para a estrutura atual. O código com BunnyItem não muda sozinho.
 function migrateMod(m) {
   let previous = {};
@@ -158,7 +163,7 @@ function repairManifest(m = mod()) {
   };
   delete fixed.entry;
   m.files["manifest.json"] = JSON.stringify(fixed, null, 2) + "\n";
-  if (typeof m.files[fixed.id + ".cs"] !== "string") m.files[fixed.id + ".cs"] = modClassSource(fixed.id);
+  if (fixed.type !== "texture" && fixed.type !== "font" && typeof m.files[fixed.id + ".cs"] !== "string") m.files[fixed.id + ".cs"] = modClassSource(fixed.id);
   m.lastManifest = m.files["manifest.json"];
 }
 function projectId() { return MOD_ID_RE.test(manifestOf(mod()).id || "") ? manifestOf(mod()).id : "MeuMod"; }

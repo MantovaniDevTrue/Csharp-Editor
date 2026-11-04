@@ -37,6 +37,9 @@
           <button class="btn small" id="newMod">Novo</button>
           <button class="btn small" id="importBtn">Importar</button>
           <button class="btn small" id="exportBtn">Exportar .bl</button>
+          <button class="btn small" id="fontBtn" hidden>Gerar fonte de um .ttf</button>
+          <button class="btn small" id="saveFolder" hidden>Salvar na pasta do Bunny</button>
+          <button class="btn small" id="openFolder" hidden>Abrir da pasta do Bunny</button>
           <button class="btn small strong" id="sendBunny" hidden>Enviar para o Bunny</button>
         </div>
         <input type="file" id="importInput" hidden multiple accept=".bl,.bmod,.zip,.cs,.png,.json,.frag,.vert,.glsl,.txt,.md">
@@ -45,7 +48,7 @@
       <div class="explorer" id="explorer">
       <div class="panehead">
         <h2>Arquivos <small id="fileCount"></small></h2>
-        <button class="btn small" id="newFile">+ Arquivo</button>
+        <span class="spacer"></span><button class="btn small" id="newTexture">+ Textura</button><button class="btn small" id="newFile">+ Arquivo</button>
       </div>
       <div class="search"><input id="fileSearch" type="search" placeholder="Buscar arquivo" aria-label="Buscar arquivo"></div>
       <div class="tree" id="tree"></div>
@@ -114,6 +117,15 @@
 <dialog id="dlg"><form method="dialog" id="dlgForm"></form></dialog>
 <dialog id="sheet" class="sheet"><div id="sheetBody"></div></dialog>
 <dialog id="mods" class="sheet tall"><div id="modsBody"></div></dialog>
+<dialog id="pixel" aria-label="Editor de textura">
+  <div class="pxhead"><button class="btn small" id="pxClose" type="button">Fechar</button><b id="pxName"></b><button class="btn small" id="pxUndo" type="button" aria-label="Desfazer">↶</button><button class="btn small" id="pxRedo" type="button" aria-label="Refazer">↷</button><button class="btn small strong" id="pxSave" type="button">Salvar</button></div>
+  <div class="pxstage"><canvas id="pxCanvas"></canvas><span id="pxInfo"></span></div>
+  <div class="pxtools" id="pxTools">
+    <button class="btn" type="button" data-tool="pencil">Lápis</button><button class="btn" type="button" data-tool="eraser">Borracha</button><button class="btn" type="button" data-tool="fill">Balde</button><button class="btn" type="button" data-tool="picker">Conta-gotas</button><button class="btn" type="button" data-tool="move">Mover</button>
+    <button class="btn" id="pxZoomOut" type="button" aria-label="Menos zoom">−</button><button class="btn" id="pxZoomIn" type="button" aria-label="Mais zoom">+</button><button class="btn" id="pxFit" type="button">Ajustar</button><button class="btn" id="pxGrid" type="button">Grade</button><button class="btn" id="pxSize" type="button">Tamanho</button>
+  </div>
+  <div class="pxcolors"><input type="color" id="pxColor" aria-label="Cor"><label>Opacidade <input type="range" id="pxAlpha" min="0" max="255"></label><div id="pxSwatches"></div></div>
+</dialog>
 <dialog id="settings" class="page"><div id="settingsBody"></div></dialog>
 
 <script>

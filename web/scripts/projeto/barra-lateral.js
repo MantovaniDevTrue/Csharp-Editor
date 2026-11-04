@@ -19,6 +19,9 @@ function closeDrawer() {
   return true;
 }
 function renderModCard() {
+  const showBridge = !!window.BunnyAndroid?.bridgeStatus;
+  $("saveFolder").hidden = !showBridge; $("openFolder").hidden = !showBridge;
+  $("fontBtn").hidden = packTypeOf(files()) !== "font";
   const m = manifestOf(mod());
   const status = manifestStatus(mod());
   $("modName").textContent = m.name || "Mod sem nome";

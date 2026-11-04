@@ -1,0 +1,8 @@
+# Ordem de aplicacao do CSS.
+base.css
+app.css
+explorador.css
+tutorial.css
+folhas-e-paginas.css
+identidade.css
+editor-de-textura.css

@@ -23,33 +23,35 @@ Precisa do Android 8.0 ou mais novo.
 ## Organização
 
 ```text
-app/                  App Android em .NET 10
-  Source/             Tela, compilador, leitura da API do Bunny
-  Resources/          Ícone, cores e textos do Android
-web/                  Interface mostrada dentro do app
-  index.html          Estrutura da página
-  styles/             CSS, aplicado na ordem dos números
-  scripts/            JavaScript, carregado na ordem dos números
-  data/               Índice inicial da API (gerado)
-tools/                Build da interface, índice da API e traduções
-  roslyn-pt/          Extrai a tradução oficial das mensagens do Roslyn
-  stub-api/           API mínima usada só no teste do emulador
-tests/                Testes da interface e teste no emulador
-bunny-upstream.txt    Commit do Bunny Loader usado no build
+app/                    App Android em .NET 10
+  Source/
+    MainActivity.cs     Tela e ponte com a interface
+    Bunny/              Bunny instalado e pasta ModSources
+    Compilador/         Compilação e leitura da API
+  Resources/            Ícone, cores e textos do Android
+web/                    Interface mostrada dentro do app
+  index.html            Estrutura da página
+  styles/               CSS, por área
+  data/                 Índice inicial da API (gerado)
+  scripts/
+    nucleo/             Estado, configurações, ZIP e utilidades
+    editor/             Editor, autocomplete, busca e teclado
+    csharp/             Lexer, API, manifest e verificação rápida
+    modelos/            Modelos prontos e o painel deles
+    compilador/         Compilação, explicação e correção dos erros
+    projeto/            Árvore, barra lateral, mods, importar e exportar
+    textura/            Editor de texturas
+    fontes/             Gerador de fontes
+    bunny/              Conexão com a pasta do Bunny
+    telas/              Tutorial e configurações
+    cenario/            Fundo animado
+    testes/             Mods usados nos testes do app
+tools/                  Build da interface, índice da API e traduções
+tests/                  Testes da interface e teste no emulador
+bunny-upstream.txt      Commit do Bunny Loader usado no build
 ```
 
-Os scripts de `web/` dividem o mesmo escopo e viram uma página só no build. Por isso, o número no nome do arquivo define a ordem.
-
-| Quero mudar | Onde mexer |
-|---|---|
-| Modelos | `web/scripts/07-modelos.js` |
-| Autocomplete | `web/scripts/13-autocomplete.js` e `14-simbolos-do-mod.js` |
-| Regras do manifest e verificação enquanto digita | `web/scripts/06-verificacao-rapida.js` |
-| Explicação dos erros | `web/scripts/20-erros.js` |
-| Compilação e resultado | `web/scripts/19-compilador.js` e `21-compilar.js` |
-| Árvore de arquivos e barra lateral | `web/scripts/16-arvore.js` e `17-barra-lateral.js` |
-| Compilador no Android | `app/Source/CompilerHost.cs` |
-| Leitura do Bunny instalado | `app/Source/BunnyPackage.cs` e `SdkIndex.cs` |
+Os scripts de `web/` dividem o mesmo escopo e viram uma página só no build. A ordem deles fica em `web/scripts/ordem.txt`, e arquivo novo precisa entrar nessa lista.
 
 ## Como compila
 
@@ -66,7 +68,7 @@ Testes da interface, com Python, Playwright e um checkout do Bunny Loader:
 ```bash
 pip install playwright
 python3 -m playwright install chromium
-BUNNY_UPSTREAM=../bunny-loader python3 tests/test_editor.py
+BUNNY_UPSTREAM=../bunny-loader python3 tests/run_tests.py
 ```
 
 No GitHub Actions, `tests/emulator_smoke.sh` também compila código certo e errado dentro do APK, em um emulador. Como lá não existe Bunny instalado, esse teste usa `tools/stub-api`. Para testar os modelos contra a API real, abra no celular **Configurações > Testar os modelos**.
@@ -81,6 +83,8 @@ Para o APK atualizar por cima da versão instalada, configure estes secrets no r
 
 Sem eles, o workflow assina com uma chave temporária, e o Android não aceita instalar por cima.
 
-## Enviar direto para o Bunny
+## Pasta do Bunny
 
-O botão **Enviar para o Bunny** instala e ativa o mod quando o Bunny aceita a ação `dev.bunnyloader.action.IMPORT_PACKAGE`. Esse recebimento está no branch [`feature/receber-pacote-do-studio`](https://github.com/MantovaniDevTrue/Bunny-Loader/tree/feature/receber-pacote-do-studio) e ainda não entrou no Bunny oficial. Até lá, o app salva o `.bl` e a importação é manual.
+O app acessa a pasta `ModSources` pelo mesmo caminho do BL Editor: a activity de ponte do Bunny entrega a permissão da pasta, e o provider dele instala o projeto.
+
+O Bunny só libera essa ponte para apps assinados com a chave dele. Com outra chave, o app oferece escolher a pasta no seletor do Android e a instalação é feita no próprio Bunny.
