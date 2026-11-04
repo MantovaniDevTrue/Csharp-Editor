@@ -46,6 +46,7 @@ def main() -> int:
 
         def shot(name: str) -> None:
             page.wait_for_timeout(450)
+            page.evaluate("document.querySelector('.toast')?.remove()")
             page.screenshot(path=str(out / f"{name}.png"))
 
         page.evaluate("setView('files')")
@@ -60,11 +61,18 @@ def main() -> int:
         shot("codigo")
         page.evaluate("setView('snips')")
         shot("modelos")
-        page.evaluate("openFile('Content/Items/Weapons/Lamina.cs'); window.bunnyStudio.appendToActive('\\nnao compila')")
+        # Um engano comum, com a mesma resposta que o compilador real da.
+        page.evaluate("""() => {
+          openFile('Content/Items/Weapons/Lamina.cs');
+          src.value = src.value.replace('Item.width = 40', 'Item.widht = 40'); src.dispatchEvent(new Event('input'));
+          const before = src.value.slice(0, src.value.indexOf('widht')).split('\\n');
+          const error = `Content/Items/Weapons/Lamina.cs(${before.length},${before.pop().length + 1}): CS1061: 'Item' does not contain a definition for 'widht' and no accessible extension method 'widht' accepting a first argument of type 'Item' could be found`;
+          window.BunnyAndroid.compile = (id) => setTimeout(() => window.bunnyStudio.onNativeCompile(id, JSON.stringify({code: -1, errors: [error], warnings: [], bytes: 0, diagnostics: '', assembly: ''})), 20);
+        }""")
         page.click("#compile")
         page.wait_for_selector(".prob.error")
         shot("erros")
-        page.evaluate("src.value = src.value.replace('\\nnao compila', ''); src.dispatchEvent(new Event('input')); setView('files')")
+        page.evaluate("src.value = src.value.replace('Item.widht', 'Item.width'); src.dispatchEvent(new Event('input')); setView('files')")
         page.click("#menuBtn")
         shot("arquivos")
         page.click("#drawerClose")
