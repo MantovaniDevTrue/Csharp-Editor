@@ -15,6 +15,7 @@ Precisa do Android 8.0 ou mais novo.
 ## O que ele faz
 
 - Editor com destaque de C#, autocomplete da API do Bunny e modelos prontos de itens, armas, NPCs, blocos e sistemas.
+- Busca e substituição no mod inteiro, com expressão regular e desfazer.
 - Compilação com os erros em português, mostrando o que foi escrito, o motivo e como deveria ficar.
 - Conferência do `manifest.json` com as regras do Bunny.
 - Exportação do pacote `.bl` e envio para o Bunny.

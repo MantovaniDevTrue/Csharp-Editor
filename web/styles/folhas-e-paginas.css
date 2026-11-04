@@ -64,3 +64,31 @@ dialog.page[open] { animation: pagein .22s cubic-bezier(.2,1,.4,1); }
 .stepper button { width: 36px; height: 34px; background: var(--slot); border: 0; clip-path: var(--px); box-shadow: inset 0 0 0 2px var(--slot-line); font-size: 18px; }
 .stepper span { min-width: 34px; text-align: center; font: 700 16px var(--f-code); color: var(--gold); }
 
+/* Ícone do mod */
+.iconrow { display: flex; align-items: center; gap: 12px; margin: 6px 0 10px; }
+.iconbox { flex: none; width: 64px; height: 64px; display: grid; place-items: center; background: var(--slot); box-shadow: inset 0 0 0 2px var(--slot-line); font: 700 22px var(--f-pixel); color: var(--muted); }
+.iconbox img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+.iconacts { min-width: 0; }
+.iconacts b { display: block; margin-bottom: 4px; }
+.iconacts div { display: flex; flex-wrap: wrap; gap: 5px; }
+.modicon { width: 40px; height: 40px; flex: none; float: left; margin: 0 10px 2px 0; image-rendering: pixelated; object-fit: contain; }
+/* Buscar no mod */
+#modSearch[open] { display: flex; flex-direction: column; }
+.mshead { display: flex; align-items: center; gap: 8px; padding: calc(8px + env(safe-area-inset-top)) 12px 8px; background: var(--panel); border-bottom: 2px solid var(--slot-line); }
+.mshead h2 { flex: 1; min-width: 0; margin: 0; font: 700 17px var(--f-pixel); color: #fff; }
+.msfields { display: grid; gap: 6px; padding: 8px 12px; background: var(--panel); }
+.msfields input { width: 100%; min-width: 0; }
+.msline { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+.msline .spacer { flex: 1; }
+.msline [aria-pressed="true"] { color: var(--bg); background: var(--gold); }
+#msInfo { padding: 4px 12px; margin: 0; font-size: 13px; color: var(--muted); }
+#msInfo.error { color: var(--life); }
+#msResults { flex: 1; min-height: 0; overflow-y: auto; padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
+.msfile { display: flex; justify-content: space-between; gap: 8px; padding: 7px 12px 3px; font: 600 13px var(--f-ui); color: var(--gold); overflow-wrap: anywhere; position: sticky; top: 0; background: var(--panel); }
+.msfile small { flex: none; color: var(--muted); }
+.msrow { display: flex; align-items: center; gap: 6px; padding: 2px 8px 2px 12px; border-bottom: 1px solid #ffffff0f; }
+.msgo { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 8px; min-height: 34px; padding: 4px 0; text-align: left; background: none; border: 0; color: var(--ink); }
+.msgo i { flex: none; min-width: 24px; font: 11px var(--f-code); color: var(--muted); text-align: right; }
+.msgo code { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: 12.5px var(--f-code); }
+.msgo mark { color: #1c1400; background: var(--gold); }
+.msmore { padding: 10px 12px; margin: 0; color: var(--muted); font-size: 13px; }

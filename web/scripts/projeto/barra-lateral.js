@@ -25,6 +25,9 @@ function renderModCard() {
   const m = manifestOf(mod());
   const status = manifestStatus(mod());
   $("modName").textContent = m.name || "Mod sem nome";
+  const iconBytes = files()["icon.png"];
+  $("modIcon").hidden = !iconBytes;
+  if (iconBytes) $("modIcon").src = pngUrl(iconBytes);
   $("modMeta").textContent = `${m.id || "sem id"} · v${m.version || "?"}`;
   $("modSummary").textContent = m.summary || "";
   $("modSelectName").textContent = m.name || "Mod sem nome";
@@ -46,7 +49,8 @@ async function editModData() {
   repairManifest();
   const m = manifestOf(mod());
   const author = m.authors?.[0]?.name || "";
-  const r = await ask({ title: "Dados do mod", text: "Grava no manifest.json. O UID não muda, para o Bunny reconhecer as atualizações.", fields: [
+  let icon = null;
+  const r = await ask({ title: "Dados do mod", text: "Grava no manifest.json. O UID não muda, para o Bunny reconhecer as atualizações.", decorate: (form) => { icon = iconRow(form, files()["icon.png"] || null); }, fields: [
     { name: "name", label: "Nome", value: m.name || "" },
     { name: "version", label: "Versão", value: m.version || "0.1.0" },
     { name: "author", label: "Autor", value: author },
@@ -59,10 +63,12 @@ async function editModData() {
   files()["manifest.json"] = JSON.stringify(m, null, 2) + "\n";
   if (state.active === "manifest.json") { src.value = files()["manifest.json"]; render(); }
   scheduleSave(); renderModCard(); renderModSelect();
+  await applyIcon(icon);
+  renderModCard();
 }
 
 // Diálogos próprios: o visualizador não exibe prompt() nem confirm().
-function ask({ title, text, fields = [], ok = "Confirmar", danger, extra, preview }) {
+function ask({ title, text, fields = [], ok = "Confirmar", danger, extra, preview, decorate }) {
   return new Promise((resolve) => {
     const dlg = $("dlg"), form = $("dlgForm");
     form.innerHTML = `<h2>${esc(title)}</h2>${text ? `<p>${esc(text)}</p>` : ""}` +
@@ -79,6 +85,7 @@ function ask({ title, text, fields = [], ok = "Confirmar", danger, extra, previe
       for (const f of fields) out[f.name] = $("fld_" + f.name).value.trim();
       resolve(out);
     });
+    decorate?.(form);
     dlg.returnValue = "cancel";
     dlg.showModal();
     const first = fields.length && $("fld_" + fields[0].name);

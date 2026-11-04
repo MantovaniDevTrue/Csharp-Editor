@@ -28,6 +28,8 @@ compilador/explicacoes.js
 compilador/correcoes.js
 compilador/compilar.js
 projeto/importar-e-exportar.js
+projeto/busca-no-mod.js
+projeto/icone-do-mod.js
 projeto/vista-e-mods.js
 telas/tutorial.js
 telas/configuracoes.js

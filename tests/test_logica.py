@@ -183,6 +183,31 @@ def test_packs(page) -> None:
     check(built["w"] % 3 == 0 and built["h"] % 3 == 0 and built["sig"] == [137, 80, 78, 71], "folha PNG multipla da escala", built["w"])
 
 
+def test_mod_search(page) -> None:
+    result = page.evaluate("""() => {
+      const s = window.bunnyStudio, o = s.modSearch;
+      const all = {'a.cs': 'Item.width = 1;\\nitem.Width = 2;\\nWidthBonus = 3;', 'b.cs': 'nada', 'c.png': new Uint8Array(4), 'd.cs': 'x width'};
+      const run = (q, opts = {}) => { Object.assign(o, {caseSensitive: false, word: false, regex: false}, opts); const r = s.searchFiles(all, q); return {t: r.total, files: r.results.map(f => f.path), first: r.results[0]?.matches[0]}; };
+      const out = {plain: run('width'), caseOn: run('Width', {caseSensitive: true}), word: run('width', {word: true}), regex: run('wid.h', {regex: true}), dollar: null, literal: null};
+      Object.assign(o, {caseSensitive: false, word: false, regex: false});
+      out.literal = s.replaceText('a.b axb', 'a.b', '$1');
+      Object.assign(o, {regex: true});
+      out.dollar = s.replaceText('Item.width', '(\\\\w+)\\\\.width', '$1.height');
+      let bad = false; try { s.searchFiles(all, '('); } catch { bad = true; }
+      out.bad = bad; out.empty = s.searchFiles(all, '').total; out.zero = s.searchFiles({f: 'abc'}, 'x*').total;
+      Object.assign(o, {regex: false});
+      return out;
+    }""")
+    check(result["plain"]["t"] == 4 and result["plain"]["files"] == ["a.cs", "d.cs"], "busca em todos os arquivos de texto", result["plain"])
+    check(result["plain"]["first"]["line"] == 1 and result["plain"]["first"]["col"] == 6, "busca acha linha e coluna", result["plain"]["first"])
+    check(result["caseOn"]["t"] == 2, "diferencia maiusculas", result["caseOn"])
+    check(result["word"]["t"] == 3, "so a palavra inteira", result["word"])
+    check(result["regex"]["t"] == 4, "expressao regular", result["regex"])
+    check(result["literal"] == "$1 axb", "texto puro nao interpreta $ nem .", result["literal"])
+    check(result["dollar"] == "Item.height", "regex usa os grupos", result["dollar"])
+    check(result["bad"] and result["empty"] == 0 and result["zero"] == 0, "regex invalida, vazia e de tamanho zero", result)
+
+
 def test_zip(page) -> None:
     payload = page.evaluate("""async () => {
       const files = {'manifest.json':'{"a":1}','Abc.cs':'namespace A;\\n'.repeat(40),'Content/ç.png':new Uint8Array([137,80,78,71,0,255])};

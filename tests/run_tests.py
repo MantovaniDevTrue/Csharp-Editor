@@ -32,6 +32,7 @@ def main() -> int:
             test_snippet_probe(page)
             test_errors(page)
             test_packs(page)
+            test_mod_search(page)
             test_zip(page)
             test_completions(page)
             page.close()

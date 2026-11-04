@@ -8,6 +8,7 @@ $("fontBtn").addEventListener("click", pickFontFile);
 $("saveFolder").addEventListener("click", () => saveToBunnyFolder(false));
 $("openFolder").addEventListener("click", openFromBunnyFolder);
 setupPixelEditor();
+setupModSearch();
 refreshBridge();
 $("editMod").addEventListener("click", editModData);
 if (window.BunnyAndroid) {
@@ -208,7 +209,7 @@ async function selfTest() {
 window.bunnyStudio = {
   onBridge(id, json) { const done = bridge.pending.get(id); if (done) { bridge.pending.delete(id); done(JSON.parse(json)); } },
   onBunnyConnected(ok) { refreshBridge(); const done = bridge.onConnect; bridge.onConnect = null; done?.(ok); },
-  openTexture, newTexture, buildFontPack, fontCodes, packTypeOf, starterPack, px, pxSetColor, pxSetTool, pxLayerAction, pxAddFrame, pxTransform, savePixel,
+  searchFiles, replaceText, modSearch, iconFromFile, openModSearch, openTexture, newTexture, buildFontPack, fontCodes, packTypeOf, starterPack, px, pxSetColor, pxSetTool, pxLayerAction, pxAddFrame, pxTransform, savePixel,
   onSdkIndex: loadSdkIndex, setRoslynPt(t) { roslynPt = t; }, translateRoslyn, openDrawer, closeDrawer, startTour, endTour, explainProblem, migrateMod, fixedText, manifestProblems, scene, settings, manifestStatus, stressMod, snippetProbeMod, editContext, fileOutline, classBodyFor, lex, quickCheck, expandSnippet, buildZip, readZip, filesFromZip, parseRoslyn, snippets: ALL_SNIPPETS, sdk: SDK,
   completionsAt(text, at, path = "Content/x.cs", force = true) { const prev = state.active; state.active = path; src.value = text; src.setSelectionRange(at, at); const r = completions(force); state.active = prev; return r; },
   appendToActive(text) { src.value += text; src.dispatchEvent(new Event("input")); },
@@ -226,6 +227,7 @@ window.bunnyStudio = {
     if (tourIndex >= 0) { endTour(); return true; }
     if ($("dlg").open) { $("dlg").close("cancel"); return true; }
     if ($("pixel").open) { closePixel(); return true; }
+    if ($("modSearch").open) { $("modSearch").close(); return true; }
     if (closeDrawer()) return true;
     if ($("dlg").open) { $("dlg").close("cancel"); return true; }
     for (const id of ["sheet", "mods", "settings"]) if ($(id).open) { $(id).close(); return true; }

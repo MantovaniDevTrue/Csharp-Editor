@@ -3,6 +3,9 @@
 .tabs button { min-width: 0; }
 .top > *, .work > * { min-width: 0; }
 input, textarea, select { max-width: 100%; }
+.search { display: flex; gap: 6px; align-items: center; }
+.search input { flex: 1; min-width: 0; }
+.search .btn { flex: none; }
 dialog { max-width: 100vw; max-height: 100dvh; }
 @media (max-width: 899px) {
   .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)) 84px repeat(2, minmax(0, 1fr)); }

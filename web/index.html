@@ -28,7 +28,7 @@
   <main class="work">
     <aside class="pane" id="filesPane">
       <section class="modcard">
-        <h1 id="modName"></h1>
+        <img class="modicon" id="modIcon" alt="" hidden><h1 id="modName"></h1>
         <p class="modmeta" id="modMeta"></p>
         <p class="modsum" id="modSummary"></p>
         <div class="modalert" id="modAlert" hidden></div>
@@ -50,7 +50,7 @@
         <h2>Arquivos <small id="fileCount"></small></h2>
         <span class="spacer"></span><button class="btn small" id="newTexture">+ Textura</button><button class="btn small" id="newFile">+ Arquivo</button>
       </div>
-      <div class="search"><input id="fileSearch" type="search" placeholder="Buscar arquivo" aria-label="Buscar arquivo"></div>
+      <div class="search"><input id="fileSearch" type="search" placeholder="Buscar arquivo" aria-label="Buscar arquivo"><button class="btn small" id="modSearchBtn" type="button">No mod</button></div>
       <div class="tree" id="tree"></div>
       </div>
     </aside>
@@ -72,6 +72,7 @@
         <span class="count" id="findCount"></span>
         <button class="tool" type="button" id="findPrev" aria-label="Anterior">↑</button>
         <button class="tool" type="submit" id="findNext" aria-label="Próximo">↓</button>
+        <button class="tool" type="button" id="findInMod">No mod</button>
         <button class="tool" type="button" id="findClose" aria-label="Fechar busca">✕</button>
       </form>
       <div class="ed" id="ed">
@@ -139,6 +140,16 @@
   </div>
   <div id="pxScrim" hidden></div>
   <div id="pxPanel" hidden></div>
+</dialog>
+<dialog id="modSearch" class="page" aria-label="Buscar no mod">
+  <div class="mshead"><button class="btn small" id="msClose" type="button">Voltar</button><h2>Buscar no mod</h2></div>
+  <div class="msfields">
+    <input id="msFind" type="search" placeholder="Procurar" aria-label="Procurar" autocapitalize="off" autocomplete="off" spellcheck="false">
+    <input id="msReplace" placeholder="Substituir por" aria-label="Substituir por" autocapitalize="off" autocomplete="off" spellcheck="false">
+    <div class="msline"><button class="btn small" type="button" data-option="caseSensitive" title="Diferenciar maiúsculas">Aa</button><button class="btn small" type="button" data-option="word" title="Só a palavra inteira">Palavra</button><button class="btn small" type="button" data-option="regex" title="Expressão regular">Regex</button><span class="spacer"></span><button class="btn small" id="msUndo" type="button" hidden>Desfazer</button><button class="btn small strong" id="msReplaceAll" type="button">Substituir</button></div>
+  </div>
+  <p id="msInfo"></p>
+  <div id="msResults"></div>
 </dialog>
 <dialog id="settings" class="page"><div id="settingsBody"></div></dialog>
 
