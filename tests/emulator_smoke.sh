@@ -36,14 +36,23 @@ print("PACOTE_OK", len(archive.namelist()), "arquivos")
 PY
 
 # Erros reais do Roslyn: cada um precisa de explicacao e de uma correcao que compila.
-adb shell am force-stop "$PACKAGE"
-adb logcat -c
-adb shell am start -n "$PACKAGE/.MainActivity" --es bunny.hash autoerrors >/dev/null
+# Neste emulador, o Play Services as vezes cai e leva o app junto: so nesse caso tenta de novo.
 errors=""
-for _ in $(seq 1 60); do
-  sleep 5
-  errors="$(adb logcat -d -s BunnyStudio:I | grep -o 'BUNNY_ERRORS_DONE.*' | tail -1)"
+for attempt in 1 2 3; do
+  adb shell am force-stop "$PACKAGE"
+  adb logcat -c
+  adb shell am start -n "$PACKAGE/.MainActivity" --es bunny.hash autoerrors >/dev/null
+  for _ in $(seq 1 60); do
+    sleep 5
+    errors="$(adb logcat -d -s BunnyStudio:I | grep -o 'BUNNY_ERRORS_DONE.*' | tail -1)"
+    [ -n "$errors" ] && break
+    adb shell pidof "$PACKAGE" >/dev/null || break
+  done
+  adb logcat -d > "$OUT/logcat-erros-$attempt.txt"
   [ -n "$errors" ] && break
+  echo "--- tentativa $attempt sem resultado ---"
+  grep -E "has died|Killing .*$PACKAGE|FATAL EXCEPTION" "$OUT/logcat-erros-$attempt.txt" | tail -6 | cut -c1-220
+  adb shell pidof "$PACKAGE" >/dev/null && break
 done
 adb logcat -d -s BunnyStudio:I | grep -E 'BUNNY_ERROR ' | cut -c30-330
 adb logcat -d -s BunnyStudio:I | grep -E 'BUNNY_ERRORS_START|BUNNY_PT|chromium|Uncaught' | tail -8 | cut -c1-300
