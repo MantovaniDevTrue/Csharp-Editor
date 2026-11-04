@@ -10,6 +10,8 @@ O app se chama **Bunny C# Studio**. Ele compila com o Roslyn e a API do Bunny in
 
 O GitHub Actions publica o APK a cada push em `main`: [BunnyCSharpStudio.apk](https://github.com/MantovaniDevTrue/Csharp-Editor/releases/download/editor-latest/BunnyCSharpStudio.apk)
 
+Precisa do Android 8.0 ou mais novo.
+
 ## O que ele faz
 
 - Editor com destaque de C#, autocomplete da API do Bunny e modelos prontos de itens, armas, NPCs, blocos e sistemas.
