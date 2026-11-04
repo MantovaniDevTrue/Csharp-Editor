@@ -2,7 +2,7 @@
 
 Editor de código para Android que escreve e compila mods C# do [Bunny Loader](https://github.com/JonataOliveiraa/Bunny-Loader) no próprio celular.
 
-O app se chama **Bunny C# Studio**. Ele compila com o Roslyn e a API do Bunny instalado no aparelho, então o Bunny Loader precisa estar instalado.
+Criado por [Mantovani](https://github.com/MantovaniDevTrue). O app se chama **Bunny C# Studio**. Ele compila com o Roslyn e a API do Bunny instalado no aparelho, então o Bunny Loader precisa estar instalado.
 
 ## Baixar
 
