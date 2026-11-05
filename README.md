@@ -102,18 +102,9 @@ BUNNY_UPSTREAM=../bunny-loader python3 tests/run_tests.py
 
 No GitHub Actions, `tests/emulator_smoke.sh` também compila código certo e errado dentro do APK, em um emulador. Como lá não existe Bunny instalado, esse teste usa `tools/stub-api`. Para testar os modelos contra a API real, abra no celular **Configurações > Testar os modelos**.
 
-## Assinatura
-
-Para o APK atualizar por cima da versão instalada, configure estes secrets no repositório, com a mesma chave de sempre:
-
-- `BUNNY_KEYSTORE_B64`
-- `BUNNY_KEYSTORE_PASSWORD`
-- `BUNNY_KEY_ALIAS`
-
-Sem eles, o workflow assina com uma chave temporária, e o Android não aceita instalar por cima.
 
 ## Pasta do Bunny
 
-O app acessa a pasta `ModSources` pelo mesmo caminho do BL Editor: a activity de ponte do Bunny entrega a permissão da pasta, e o provider dele instala o projeto.
+O app acessa a pasta `ModSources`: a activity de ponte do Bunny entrega a permissão da pasta, e o provider dele instala o projeto.
 
 O Bunny só libera essa ponte para apps assinados com a chave dele. Com outra chave, o app oferece escolher a pasta no seletor do Android e a instalação é feita no próprio Bunny.
