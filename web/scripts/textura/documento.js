@@ -156,18 +156,3 @@ async function closePixel() {
   clearInterval(pxPlayTimer);
   $("pixel").close();
 }
-async function newTexture(suggested) {
-  const inPack = packTypeOf(files()) === "texture";
-  const fallback = suggested || (inPack ? "Images/Item_1.png" : "Content/Items/NovaTextura.png");
-  const r = await ask({ title: "Nova textura", text: inPack ? "Em Images/, o nome diz o que ela troca: Item_1 é a Picareta de Cobre, NPC_4 é o Olho de Cthulhu e Tiles_0 é a terra." : "No mod, o caminho segue o namespace e o nome da classe.", fields: [{ name: "path", label: "Caminho", value: fallback }, { name: "w", label: "Largura", value: "32" }, { name: "h", label: "Altura", value: "32" }], ok: "Criar" });
-  if (!r) return;
-  let path = cleanPath(r.path);
-  if (!path) { toast("Caminho inválido."); return; }
-  if (!/\.png$/i.test(path)) path += ".png";
-  if (files()[path] !== undefined) { toast("Esse arquivo já existe."); return; }
-  const w = Number(r.w), h = Number(r.h);
-  if (!Number.isInteger(w) || !Number.isInteger(h) || w < 1 || h < 1 || w > 4096 || h > 4096) { toast("Use de 1 a 4096 pixels."); return; }
-  files()[path] = await encodePng(w, h, new Uint8ClampedArray(w * h * 4));
-  scheduleSave(); renderTree(); renderModCard();
-  await openTexture(path);
-}

@@ -96,7 +96,7 @@ src.addEventListener("input", (e) => {
 src.addEventListener("scroll", syncScroll, { passive: true });
 src.addEventListener("click", () => { closePopup(); updateCurLine(); });
 src.addEventListener("keyup", updateCurLine);
-document.addEventListener("selectionchange", () => { if (document.activeElement === src) updateCurLine(); });
+document.addEventListener("selectionchange", () => { if (document.activeElement === src) { updateCurLine(); renderLive(); } });
 src.addEventListener("blur", () => setTimeout(() => { if (document.activeElement !== src) closePopup(); }, 120));
 
 // Teclas de atalho no celular: o foco fica no editor.

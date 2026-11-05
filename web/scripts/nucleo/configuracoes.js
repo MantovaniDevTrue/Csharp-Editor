@@ -1,5 +1,5 @@
 // ---------- Configurações ----------
-const SETTING_DEFAULTS = { wrap: false, fontSize: 14, indent: 4, lineNumbers: true, currentLine: true, autoPairs: true, suggest: true, live: true, warm: true, scene: true, weather: "auto", cycle: "clock", typeFx: "glow", anims: true, haptics: true };
+const SETTING_DEFAULTS = { wrap: false, fontSize: 14, indent: 4, lineNumbers: true, currentLine: true, autoPairs: true, suggest: true, live: true, livePreview: true, liveOpen: false, warm: true, scene: true, weather: "auto", cycle: "clock", typeFx: "glow", anims: true, haptics: true };
 const settings = { ...SETTING_DEFAULTS };
 try { Object.assign(settings, JSON.parse(localStorage.getItem("bunny-studio-settings") || "{}")); } catch { /* usa os padrões */ }
 const indentUnit = () => " ".repeat(settings.indent);
@@ -16,6 +16,7 @@ function applySettings() {
   textarea.style.tabSize = hlEl().style.tabSize = settings.indent;
   if (state.uid && state.active && typeof files()[state.active] === "string") { measure(); textarea.scrollLeft = 0; render(); }
   if (!settings.live) { state.live = []; }
+  if (state.uid) renderLive();
   if (scene.g && !settings.scene) scene.draw(performance.now(), 0);
 }
 const hlEl = () => $("hl");

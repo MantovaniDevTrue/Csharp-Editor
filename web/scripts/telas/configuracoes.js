@@ -10,6 +10,7 @@ const SETTINGS_UI = [
   { group: "Ajuda ao escrever" },
   { key: "suggest", type: "switch", label: "Sugestões automáticas", hint: "Abre a lista enquanto digita. O botão Sugerir continua funcionando." },
   { key: "live", type: "switch", label: "Checar enquanto digita", hint: "Marca erros comuns na linha, sem precisar compilar." },
+  { key: "livePreview", type: "switch", label: "Prévia viva", hint: "Mostra o item, NPC ou projétil como no jogo, com controles que mudam o código." },
   { key: "warm", type: "switch", label: "Aquecer o compilador", hint: "Prepara o Roslyn ao abrir o app. A primeira compilação fica mais rápida." },
   { group: "Aparência" },
   { key: "scene", type: "switch", label: "Cenário animado", hint: "Céu, nuvens e clima em movimento. Desligar gasta menos bateria." },

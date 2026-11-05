@@ -70,7 +70,7 @@ async function editModData() {
 }
 
 // Diálogos próprios: o visualizador não exibe prompt() nem confirm().
-function ask({ title, text, fields = [], ok = "Confirmar", danger, extra, preview, decorate }) {
+function ask({ title, text, fields = [], ok = "Confirmar", danger, extra, preview, decorate, focus = true }) {
   return new Promise((resolve) => {
     const dlg = $("dlg"), form = $("dlgForm");
     form.innerHTML = `<h2>${esc(title)}</h2>${text ? `<p>${esc(text)}</p>` : ""}` +
@@ -91,23 +91,13 @@ function ask({ title, text, fields = [], ok = "Confirmar", danger, extra, previe
     dlg.returnValue = "cancel";
     dlg.showModal();
     const first = fields.length && $("fld_" + fields[0].name);
-    if (first) { first.focus(); first.select(); }
+    if (first && focus) { first.focus(); first.select(); }
   });
 }
 function cleanPath(path) {
   const clean = path.trim().replace(/\\/g, "/").replace(/^\/+/, "");
   if (!clean || clean.split("/").some((p) => !p || p === "." || p === "..")) return null;
   return clean;
-}
-async function newFile(suggested = "Content/Items/NovoItem.cs") {
-  const r = await ask({ title: "Novo arquivo", text: "Caminho dentro do mod. Itens e texturas costumam ficar em Content/, e sistemas em Common/.", fields: [{ name: "path", label: "Caminho", value: suggested }], ok: "Criar" });
-  // O arquivo começa vazio: digitar "espada" ou "asas" já traz a classe inteira.
-  if (!r) return;
-  const path = cleanPath(r.path);
-  if (!path) { toast("Caminho inválido."); return; }
-  if (files()[path] !== undefined) { toast("Esse arquivo já existe."); return; }
-  files()[path] = "";
-  scheduleSave(); openFile(path); setView("code");
 }
 async function renameFile(path) {
   if (path === "manifest.json") { toast("O manifest.json precisa manter esse nome para o Bunny encontrá-lo."); return; }

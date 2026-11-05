@@ -1,0 +1,42 @@
+/* Prévia viva: uma faixa fina que abre o cartão do item como no jogo */
+#live { position: relative; z-index: 6; flex: none; background: var(--panel); border-bottom: 2px solid var(--outline); min-width: 0; }
+#live[hidden] { display: none; }
+body.kb #live { display: none; }
+.livebar { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 38px; padding: 3px 10px; background: none; border: 0; text-align: left; color: var(--ink); min-width: 0; }
+.livethumb { flex: none; display: grid; place-items: center; width: 26px; height: 26px; color: var(--muted); background: var(--ed-bg); box-shadow: inset 0 0 0 2px var(--slot-line); overflow: hidden; }
+.livethumb img { max-width: 22px; max-height: 22px; image-rendering: pixelated; }
+.livethumb svg { width: 16px; height: 16px; }
+.livebar b { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 500 15px var(--f-pixel); text-shadow: 1px 1px 0 var(--outline); }
+.livebar small { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12.5px; color: var(--muted); }
+.livechev { flex: none; width: 8px; height: 8px; border-right: 2px solid var(--gold); border-bottom: 2px solid var(--gold); transform: rotate(45deg) translate(-2px, -2px); }
+.livebar[aria-expanded="true"] .livechev { transform: rotate(-135deg) translate(-2px, -2px); }
+.livebody { max-height: min(42dvh, 340px); overflow-y: auto; overscroll-behavior: contain; padding: 2px 10px 10px; display: flex; flex-direction: column; gap: 8px; }
+.livebody[hidden] { display: none; }
+.livecard { display: flex; gap: 10px; align-items: flex-start; min-width: 0; }
+.livesprite { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; width: 64px; height: 64px; padding: 4px; color: var(--gold); background: repeating-conic-gradient(#25406a 0 25%, #1a2f53 0 50%) 0 0 / 12px 12px; border: 0; box-shadow: inset 0 0 0 2px var(--slot-line); }
+.livesprite img { max-width: 100%; max-height: 100%; min-width: 32px; object-fit: contain; image-rendering: pixelated; }
+.livesprite svg { width: 18px; height: 18px; }
+.livesprite small { font: 500 11px var(--f-pixel); color: var(--ink); }
+/* O quadro de descrição do jogo: fundo azul translúcido e texto com sombra. */
+.livetip { flex: 1; min-width: 0; min-height: 64px; display: flex; flex-direction: column; gap: 1px; padding: 6px 9px; background: #1a2b63e0; box-shadow: inset 0 0 0 2px #0b1433, inset 0 0 0 4px #2c4592; font: 500 14px/1.3 var(--f-pixel); color: #fff; text-shadow: 1px 1px 0 #000; overflow-wrap: anywhere; }
+.livetip b { font-weight: 700; font-size: 15px; }
+.livemuted { color: var(--muted); }
+#liveStats { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.livestat { display: grid; grid-template-columns: minmax(74px, 104px) minmax(0, 1fr) 44px; gap: 8px; align-items: center; min-height: 36px; }
+.livelabel { min-height: 34px; padding: 0; text-align: left; background: none; border: 0; font: 500 13.5px var(--f-pixel); color: var(--ink); text-decoration: underline dotted var(--slot-line); text-underline-offset: 3px; overflow-wrap: anywhere; }
+.livestat input[type=range] { width: 100%; min-width: 0; height: 34px; margin: 0; accent-color: var(--gold); touch-action: none; }
+.livestat output { font: 600 13px var(--f-code); text-align: right; color: var(--gold); white-space: nowrap; }
+.livestat code { grid-column: 2 / 4; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 12px var(--f-code); color: var(--muted); }
+.livepicks { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; min-width: 0; }
+.livepicks small { flex: 0 0 100%; font: 500 12.5px var(--f-pixel); color: var(--muted); }
+.liverare { width: 28px; height: 28px; padding: 0; background: var(--c); border: 0; box-shadow: inset 0 0 0 2px #0006; }
+.liverare[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--outline), 0 0 0 4px #fff; }
+.livechip { min-height: 32px; padding: 0 9px; font: 500 13.5px var(--f-pixel); color: var(--ink); background: var(--slot); border: 0; clip-path: var(--px); box-shadow: inset 0 0 0 2px var(--slot-line); }
+.livechip[aria-pressed="true"] { color: var(--on-gold); background: var(--gold); box-shadow: inset 0 0 0 2px var(--outline); }
+/* Pouca altura: o cartão abre por cima do código, para o editor não sumir. */
+@media (max-height: 599px) {
+  .livebar { min-height: 32px; }
+  .livebody { position: absolute; top: 100%; left: 0; right: 0; max-height: var(--live-room, 50dvh); background: var(--panel); border-bottom: 3px solid var(--slot-line); box-shadow: 0 3px 0 var(--outline); }
+}
+/* Tela muito baixa: cada linha de código conta, e a prévia fica fora. */
+@media (max-height: 340px) { #live { display: none; } }

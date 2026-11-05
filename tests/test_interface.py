@@ -239,6 +239,94 @@ def test_ui(browser, url: str, shots: Path | None) -> None:
     page.wait_for_function("files()['icon.png'] === undefined")
     check(page.locator('#modIcon').get_attribute("data-empty") == "true", "remover tira o icone do cartao")
 
+    # Novo arquivo: varias coisas para criar, com o caminho e o conteudo certos.
+    page.click('#newFile')
+    page.wait_for_selector('.picktabs button')
+    tabs = page.locator('.picktabs button').all_inner_texts()
+    check({'Itens', 'Combate', 'Mundo', 'Sistemas', 'Outros'} <= set(tabs), "novo arquivo mostra as categorias", tabs)
+    page.locator('.picktabs button', has_text='Combate').click()
+    page.click('.pickrow[data-kind="bnpc"]')
+    check(page.input_value('#fld_path') == 'Content/NPCs/MeuInimigo.cs', "escolher o tipo ajusta o caminho", page.input_value('#fld_path'))
+    check('MeuInimigo.png' in page.inner_text('#pickNote'), "avisa que tambem cria a textura", page.inner_text('#pickNote'))
+    page.fill('#fld_path', 'Content/Monstros/Slimao.cs')
+    page.click('#dlgOk')
+    page.wait_for_function("state.active === 'Content/Monstros/Slimao.cs'")
+    code = page.evaluate("files()['Content/Monstros/Slimao.cs']")
+    check('class Slimao' in code and 'Content.Monstros' in code and 'ModNPC' in code, "modelo usa o nome e a pasta escolhidos", code[:200])
+    check(page.evaluate("files()['Content/Monstros/Slimao.png'] !== undefined"), "textura provisoria ao lado da classe")
+    page.keyboard.press("Escape")
+    page.evaluate("setView('files')")
+    page.click('#newFile')
+    page.locator('.picktabs button', has_text='Outros').click()
+    page.click('.pickrow[data-kind="texture"]')
+    page.wait_for_function("document.querySelector('#dlg h2')?.textContent === 'Nova textura'")
+    page.click('#dlg button[value="cancel"]')
+
+    # Previa viva: le o codigo e devolve o que muda nos controles.
+    page.evaluate("""() => {
+      files()['Content/Items/Teste.cs'] = 'using Terraria;\\nusing Terraria.ModLoader;\\n\\nnamespace X.Content.Items;\\n\\npublic class Teste : ModItem\\n{\\n    public override void SetDefaults()\\n    {\\n        Item.damage = 50; // comentario\\n        Item.useAnimation = 20;\\n        Item.knockBack = 6;\\n        Item.DamageType = DamageClass.Melee;\\n        Item.value = Item.buyPrice(gold: 1);\\n        Item.rare = 2;\\n    }\\n}\\n';
+      settings.liveOpen = true; openFile('Content/Items/Teste.cs'); setView('code');
+    }""")
+    page.wait_for_selector('#liveTip')
+    page.wait_for_function("document.querySelector('#liveTip').textContent.includes('50 de dano corpo a corpo')")
+    tip = page.inner_text('#liveTip')
+    check('Muito rápida' in tip and 'Repulsão média' in tip and '2 prata' not in tip and '20 prata' in tip, "cartao mostra velocidade, repulsao e venda", tip)
+    check(page.evaluate("document.querySelector('#liveName').style.color") == 'rgb(150, 255, 150)', "cor da raridade", page.evaluate("document.querySelector('#liveName').style.color"))
+    page.evaluate("""() => { const r = document.querySelector('[data-stat=damage]'); r.value = 80; r.dispatchEvent(new Event('input')); }""")
+    check('80 de dano' in page.inner_text('#liveTip') and 'Item.damage = 50' in page.input_value('#src'), "arrastar so mexe na previa")
+    page.evaluate("""() => { const r = document.querySelector('[data-stat=damage]'); r.dispatchEvent(new Event('change')); }""")
+    check('Item.damage = 80; // comentario' in page.input_value('#src'), "soltar grava no codigo", page.input_value('#src')[:300])
+    check(page.evaluate("document.activeElement !== src"), "o controle nao abre o teclado")
+    page.wait_for_selector('[data-stat=damage]')
+    page.click('.liverare[aria-label="Red"]')
+    code = page.input_value('#src')
+    check('Item.rare = ItemRarityID.Red;' in code and code.startswith('using Terraria.ID;'), "raridade grava e traz o using", code[:120])
+    page.locator('.livechip', has_text='+ Crítico extra').click()
+    code = page.input_value('#src')
+    check('Item.crit = 6;' in code and code.index('Item.crit') < code.index('}'), "adicionar entra no SetDefaults", code)
+    page.wait_for_selector('[data-stat=crit]')
+    page.evaluate("""() => { const r = document.querySelector('[data-stat=knockBack]'); r.value = 6.5; r.dispatchEvent(new Event('change')); }""")
+    check('Item.knockBack = 6.5f;' in page.input_value('#src'), "numero quebrado vira float", page.input_value('#src'))
+    page.click('#undoBtn')
+    check('Item.knockBack = 6;' in page.input_value('#src'), "desfazer volta o controle", page.input_value('#src'))
+    page.evaluate("""() => {
+      const t = src.value + 'public class OutroNpc : ModNPC\\n{\\n    public override void SetDefaults() { NPC.lifeMax = 25; }\\n}\\n';
+      src.value = t; src.setSelectionRange(t.length - 8, t.length - 8); src.dispatchEvent(new Event('input')); closePopup();
+    }""")
+    page.wait_for_function("document.querySelector('#liveName').textContent === 'Outro Npc'")
+    check('25 de vida' in page.inner_text('#liveTip'), "acompanha a classe do cursor", page.inner_text('#liveTip'))
+    page.evaluate("settings.liveOpen = false; openFile('manifest.json')")
+    page.wait_for_timeout(50)
+    check(page.locator('#live').is_hidden(), "fora de um item, a faixa some")
+    page.evaluate("delete files()['Content/Items/Teste.cs']; setView('files')")
+
+    # Nova textura: num mod em C#, aponta o que falta; num pacote, troca as do jogo.
+    page.evaluate("files()['Content/Items/SemImagem.cs'] = 'namespace ' + projectId() + '.Content.Items;\\npublic class SemImagem : ModItem { public override void SetDefaults() { Item.width = 24; Item.height = 30; } }\\n'")
+    page.click('#newTexture')
+    page.wait_for_selector('.pickrow')
+    check(page.input_value('#fld_path') != 'Images/Item_1.png', "mod em C# nao sugere textura do jogo", page.input_value('#fld_path'))
+    page.click('.pickrow[data-kind="missing-SemImagem"]')
+    check(page.input_value('#fld_path') == 'Content/Items/SemImagem.png' and page.input_value('#fld_w') == '24' and page.input_value('#fld_h') == '30', "classe sem textura traz caminho e tamanho", [page.input_value('#fld_path'), page.input_value('#fld_w')])
+    page.click('#dlg button[value="cancel"]')
+    page.evaluate("delete files()['Content/Items/SemImagem.cs']")
+    keep = page.evaluate("state.uid")
+    page.evaluate("(async () => { const m = window.bunnyStudio.starterPack('texture', 'pacote', 'Pacote'); state.mods[m.uid] = m; await switchMod(m.uid); })()")
+    page.wait_for_function("packTypeOf(files()) === 'texture'")
+    page.click('#newTexture')
+    page.wait_for_selector('.pickrow')
+    check('pacote de texturas' in page.inner_text('#dlg') and 'mod em C#' in page.inner_text('#dlg'), "pacote explica o que faz", page.inner_text('#dlg')[:200])
+    check(page.input_value('#fld_path').startswith('Images/'), "pacote usa Images/")
+    page.click('.pickrow[data-kind="NPC"]')
+    check(page.input_value('#fld_path') == 'Images/NPC_4.png', "pacote muda o tipo do jogo")
+    page.click('#dlg button[value="cancel"]')
+    page.evaluate("setView('files')")
+    page.click('#newFile')
+    page.wait_for_selector('.pickrow')
+    check(page.locator('.pickrow[data-kind="bsword"]').count() == 0, "pacote nao oferece classes C#")
+    page.click('#dlg button[value="cancel"]')
+    page.evaluate("(uid) => { const old = state.uid; return switchMod(uid).then(() => { delete state.mods[old]; }); }", keep)
+    page.wait_for_function("(uid) => state.uid === uid", arg=keep)
+
     # Editor de texturas: ferramentas, camadas, quadros e o PNG final.
     page.click('#newTexture')
     page.fill('#fld_path', 'Content/Tex.png')
@@ -324,12 +412,12 @@ def test_ui(browser, url: str, shots: Path | None) -> None:
     page.evaluate("window.bunnyStudio.startTour()")
     page.wait_for_selector("#tourNext")
     steps = 0
-    while page.locator("#tour").count() and steps < 15:
+    while page.locator("#tour").count() and steps < 16:
         check(page.locator("#tourTitle").inner_text() != "", f"tutorial passo {steps + 1}")
         page.wait_for_timeout(250)
         page.click("#tourNext")
         steps += 1
-    check(steps == 14 and page.locator("#tour").count() == 0, "tutorial termina", steps)
+    check(steps == 15 and page.locator("#tour").count() == 0, "tutorial termina", steps)
 
     # Mod grande: pastas recolhidas e busca.
     # Palavra no arquivo vazio: usa o nome do arquivo, cria textura e mostra a previa.

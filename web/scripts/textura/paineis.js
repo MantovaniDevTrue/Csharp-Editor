@@ -123,25 +123,43 @@ function pxPaintColorCanvases(hsv) {
 }
 function pxColorPanel(box) {
   const hsv = rgbToHsv(px.color);
-  box.innerHTML = `<h3>Cor</h3><canvas id="pxSV" aria-label="Saturação e brilho"></canvas><canvas id="pxHue" aria-label="Matiz"></canvas>
+  box.innerHTML = `<h3>Cor</h3><div class="txpick"><canvas id="pxSV" aria-label="Saturação e brilho"></canvas><i class="txcursor" id="pxSVCursor" aria-hidden="true"></i><span class="txloupe" id="pxLoupe" aria-hidden="true" hidden></span></div><div class="txpick txpickhue"><canvas id="pxHue" aria-label="Matiz"></canvas><i class="txcursor" id="pxHueCursor" aria-hidden="true"></i></div>
     <div class="txrow"><label for="pxHex">Hex</label><input id="pxHex" maxlength="7" spellcheck="false" autocapitalize="off" value="${pxHex(px.color)}"><label for="pxAlpha">Opac.</label><input type="range" id="pxAlpha" min="0" max="255" value="${px.color[3]}"></div>
     <div class="txrow"><button class="txbtn" id="pxAddColor" type="button">Guardar na paleta</button><button class="txbtn" id="pxReplace" type="button">Trocar na camada</button></div>`;
   pxPaintColorCanvases(hsv);
-  const drag = (el, apply) => {
-    const run = (e) => { const r = el.getBoundingClientRect(); apply(Math.max(0, Math.min(.999, (e.clientX - r.left) / r.width)), Math.max(0, Math.min(.999, (e.clientY - r.top) / r.height))); };
-    el.addEventListener("pointerdown", (e) => { el.setPointerCapture(e.pointerId); run(e); });
-    el.addEventListener("pointermove", (e) => { if (e.buttons || e.pointerType === "touch") run(e); });
+  // O dedo cobre o ponto escolhido: a lupa mostra a cor acima dele, e os cursores marcam o lugar.
+  const place = () => {
+    const x = Math.max(0, Math.min(1, hsv.s)), y = Math.max(0, Math.min(1, 1 - hsv.v)), shown = `rgb(${hsvToRgb(hsv.h, hsv.s, hsv.v)})`;
+    const sv = $("pxSVCursor"), hue = $("pxHueCursor"), loupe = $("pxLoupe");
+    sv.style.left = `${(x * (PX_STEPS - 1) + .5) / PX_STEPS * 100}%`;
+    sv.style.top = `${(y * (PX_STEPS - 1) + .5) / PX_STEPS * 100}%`;
+    sv.style.setProperty("--c", shown);
+    hue.style.left = `${Math.max(0, Math.min(1, ((hsv.h % 360) + 360) % 360 / 360)) * 100 + 50 / PX_STEPS}%`;
+    hue.style.setProperty("--c", `rgb(${hsvToRgb(hsv.h, 1, 1)})`);
+    loupe.style.setProperty("--c", shown);
+    loupe.style.left = sv.style.left; loupe.style.top = sv.style.top;
+    loupe.dataset.below = String(y < .3);
   };
-  const commit = () => { px.color = [...hsvToRgb(hsv.h, hsv.s, hsv.v), px.color[3] || 255]; $("pxHex").value = pxHex(px.color); $("pxFront").style.setProperty("--c", pxCss(px.color)); };
-  drag($("pxSV"), (x, y) => { hsv.s = Math.floor(x * PX_STEPS) / (PX_STEPS - 1); hsv.v = 1 - Math.floor(y * PX_STEPS) / (PX_STEPS - 1); commit(); });
+  const drag = (el, apply, loupe) => {
+    const run = (e) => { const r = el.getBoundingClientRect(); apply(Math.max(0, Math.min(.999, (e.clientX - r.left) / r.width)), Math.max(0, Math.min(.999, (e.clientY - r.top) / r.height))); place(); };
+    const stop = () => { el.dataset.dragging = ""; if (loupe) $("pxLoupe").hidden = true; };
+    el.addEventListener("pointerdown", (e) => { el.setPointerCapture(e.pointerId); el.dataset.dragging = "1"; if (loupe) $("pxLoupe").hidden = false; run(e); });
+    el.addEventListener("pointermove", (e) => { if (el.dataset.dragging) run(e); });
+    el.addEventListener("pointerup", stop);
+    el.addEventListener("pointercancel", stop);
+  };
+  const commit = () => { px.color = [...hsvToRgb(hsv.h, hsv.s, hsv.v), px.color[3] || 255]; $("pxHex").value = pxHex(px.color); $("pxLoupe").textContent = pxHex(px.color); $("pxFront").style.setProperty("--c", pxCss(px.color)); };
+  drag($("pxSV"), (x, y) => { hsv.s = Math.floor(x * PX_STEPS) / (PX_STEPS - 1); hsv.v = 1 - Math.floor(y * PX_STEPS) / (PX_STEPS - 1); commit(); }, true);
   drag($("pxHue"), (x) => { hsv.h = Math.floor(x * PX_STEPS) / PX_STEPS * 360; pxPaintColorCanvases(hsv); commit(); });
   $("pxHex").addEventListener("input", () => {
     const m = /^#?([0-9a-f]{6})$/i.exec($("pxHex").value.trim());
     if (!m) return;
     px.color = [parseInt(m[1].slice(0, 2), 16), parseInt(m[1].slice(2, 4), 16), parseInt(m[1].slice(4, 6), 16), px.color[3]];
-    Object.assign(hsv, rgbToHsv(px.color)); pxPaintColorCanvases(hsv);
+    Object.assign(hsv, rgbToHsv(px.color)); pxPaintColorCanvases(hsv); place();
     $("pxFront").style.setProperty("--c", pxCss(px.color));
   });
+  $("pxLoupe").textContent = pxHex(px.color);
+  place();
   $("pxAlpha").addEventListener("input", () => { px.color[3] = Number($("pxAlpha").value); $("pxFront").style.setProperty("--c", pxCss(px.color)); });
   $("pxAddColor").addEventListener("click", () => { if (!px.palette.some((c) => c.join() === px.color.join())) px.palette.unshift([...px.color]); renderPxPalette(); });
   $("pxReplace").addEventListener("click", () => { pxPickReplacement(); });

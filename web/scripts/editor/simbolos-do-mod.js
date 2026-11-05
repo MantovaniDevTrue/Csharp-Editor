@@ -13,7 +13,7 @@ function projectIndex() {
       const scan = scanFile(path, value);
       const types = [];
       scan.sig.forEach((t, i) => { if (["struct", "enum", "interface", "record"].includes(t.v) && scan.sig[i + 1]?.t === "id") types.push(scan.sig[i + 1].v); });
-      hit = { value, types, globals: [...scan.globals], classes: scan.classes.map((c) => ({ name: c.name, base: c.base, abstract: c.mods.has("abstract"), isStatic: c.mods.has("static"), members: [...classMembers(scan, c).declared], path })) };
+      hit = { value, types, globals: [...scan.globals], classes: scan.classes.map((c) => ({ name: c.name, ns: scan.ns, base: c.base, abstract: c.mods.has("abstract"), isStatic: c.mods.has("static"), members: [...classMembers(scan, c).declared], path })) };
       scanCache.set(path, hit);
     }
     for (const c of hit.classes) if (!classes.has(c.name)) classes.set(c.name, c);

@@ -68,6 +68,18 @@ def test_screens(browser, url: str, shots: Path | None) -> None:
         page.evaluate("() => { newFile(); }")
         measure("dialogo", "#dlg")
         page.evaluate("document.querySelector('#dlg').close('cancel')")
+        page.evaluate("() => { newTexture(); }")
+        measure("nova-textura", "#dlg")
+        page.evaluate("document.querySelector('#dlg').close('cancel')")
+        page.evaluate("""() => {
+          settings.liveOpen = true;
+          files()['Content/Items/Previa.cs'] = 'using Terraria;\\nusing Terraria.ModLoader;\\nnamespace M.Content.Items;\\npublic class Previa : ModItem\\n{\\n    public override void SetDefaults()\\n    {\\n        Item.damage = 50;\\n        Item.crit = 6;\\n        Item.useTime = 20;\\n        Item.useAnimation = 20;\\n        Item.knockBack = 6;\\n    }\\n}\\n';
+          openFile('Content/Items/Previa.cs'); setView('code');
+        }""")
+        measure("previa-viva", "#codePane")
+        room = page.evaluate("document.querySelector('#ed').getBoundingClientRect().height")
+        check(room >= (70 if height >= 600 else 28), f"{label}: previa deixa espaco para o codigo", room)
+        page.evaluate("settings.liveOpen = false; delete files()['Content/Items/Previa.cs']; openFile('manifest.json')")
         page.evaluate("openFile('Content/Items/StarterMaterial.png'); setView('code')")
         page.evaluate("window.bunnyStudio.openTexture('Content/Items/StarterMaterial.png')")
         page.wait_for_selector("#pixel[open]")
@@ -77,12 +89,22 @@ def test_screens(browser, url: str, shots: Path | None) -> None:
             measure("textura-" + panel, "#pixel")
         page.evaluate("document.querySelector('#pxFront').click()")
         measure("textura-color", "#pixel")
+        cursor = page.evaluate("(() => { const a = document.querySelector('#pxSVCursor').getBoundingClientRect(), b = document.querySelector('#pxSV').getBoundingClientRect(), h = document.querySelector('#pxHueCursor').getBoundingClientRect(), g = document.querySelector('#pxHue').getBoundingClientRect(); return a.width > 0 && a.left + 8 >= b.left && a.right - 8 <= b.right && a.top + 8 >= b.top && a.bottom - 8 <= b.bottom && h.width > 0 && h.left + 5 >= g.left && h.right - 5 <= g.right; })()")
+        check(cursor, f"{label}: cursores de cor dentro das areas")
+        area = page.locator("#pxSV").bounding_box()
+        page.mouse.move(area["x"] + area["width"] * .75, area["y"] + area["height"] * .25)
+        page.mouse.down()
+        page.mouse.move(area["x"] + area["width"] * .5, area["y"] + area["height"] * .5, steps=3)
+        moved = page.evaluate("(() => { const a = document.querySelector('#pxSVCursor').getBoundingClientRect(), b = document.querySelector('#pxSV').getBoundingClientRect(); return [(a.left + a.width / 2 - b.left) / b.width, (a.top + a.height / 2 - b.top) / b.height, !document.querySelector('#pxLoupe').hidden]; })()")
+        check(abs(moved[0] - .5) < .06 and abs(moved[1] - .5) < .06 and moved[2], f"{label}: cursor segue o dedo e mostra a lupa", moved)
+        page.mouse.up()
+        check(page.locator("#pxLoupe").is_hidden(), f"{label}: lupa some ao soltar")
         page.evaluate("document.querySelector('#pxFront').click()")
         page.evaluate("document.querySelector('#pixel').close()")
         page.evaluate("window.bunnyStudio.startTour()")
         page.wait_for_selector("#tourNext")
         steps = 0
-        while page.locator("#tour").count() and steps < 15:
+        while page.locator("#tour").count() and steps < 16:
             page.wait_for_timeout(300)
             box = page.locator(".tourcard").bounding_box()
             check(box and box["y"] >= 0 and box["x"] >= 0 and box["y"] + box["height"] <= height + 1 and box["x"] + box["width"] <= width + 1, f"{label}: tutorial passo {steps + 1} cabe", box)

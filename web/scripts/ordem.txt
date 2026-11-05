@@ -19,9 +19,12 @@ editor/busca-e-estrutura.js
 editor/paradas-do-tab.js
 editor/autocomplete.js
 editor/simbolos-do-mod.js
+editor/previa-viva.js
 editor/teclado.js
 projeto/arvore.js
 projeto/barra-lateral.js
+projeto/seletor.js
+projeto/novo-arquivo.js
 modelos/painel-de-modelos.js
 compilador/motor.js
 compilador/erros.js
@@ -36,6 +39,7 @@ telas/tutorial.js
 telas/configuracoes.js
 testes/mod-de-teste.js
 textura/documento.js
+textura/nova-textura.js
 textura/ferramentas.js
 textura/tela.js
 textura/paineis.js

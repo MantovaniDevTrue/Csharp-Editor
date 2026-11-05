@@ -66,6 +66,7 @@ function render() {
     linesEl.innerHTML = labels.slice(0, rows.length).map((label, i) => `<span class="gl" style="height:${hl.children[i]?.offsetHeight || lineH}px">${label}</span>`).join("");
   }
   syncScroll();
+  renderLive();
 }
 // Posição do cursor dentro do editor, com ou sem quebra de linha.
 function caretPoint() {
@@ -191,6 +192,7 @@ function openFile(path, position) {
   $("codeWrap").hidden = isImage;
   document.querySelector(".gutter").hidden = isImage;
   $("imgview").hidden = !isImage;
+  if (isImage) renderLive();
   $("activePath").textContent = "‎" + (path || "");
   state.open = [path, ...state.open.filter((p) => p !== path && files()[p] !== undefined)].slice(0, 6);
   renderOpenTabs();

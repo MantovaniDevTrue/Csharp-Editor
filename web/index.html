@@ -82,6 +82,13 @@
         <button class="tool" type="button" id="findInMod">No mod</button>
         <button class="tool" type="button" id="findClose" aria-label="Fechar busca" data-only-icon="close"></button>
       </form>
+      <section id="live" aria-label="Prévia viva" hidden>
+        <button class="livebar" id="liveBar" type="button" aria-expanded="false" aria-controls="liveBody"><span class="livethumb" id="liveThumb"></span><b id="liveName"></b><small id="liveSummary"></small><i class="livechev" aria-hidden="true"></i></button>
+        <div class="livebody" id="liveBody" hidden>
+          <div class="livecard"><button class="livesprite" id="liveSprite" type="button"></button><div class="livetip" id="liveTip"></div></div>
+          <div id="liveStats"></div>
+        </div>
+      </section>
       <div class="ed" id="ed">
         <div class="gutter"><pre id="lines" aria-hidden="true"></pre></div>
         <div class="code" id="codeWrap">

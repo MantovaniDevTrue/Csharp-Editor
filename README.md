@@ -20,9 +20,15 @@ O app se chama **Bunny C# Studio**.
 |---|---|---|---|
 | <img src="docs/prints/modelos.png" width="200"> | <img src="docs/prints/erros.png" width="200"> | <img src="docs/prints/busca.png" width="200"> | <img src="docs/prints/textura.png" width="200"> |
 
+| Prévia viva | Novo arquivo |
+|---|---|
+| <img src="docs/prints/previa.png" width="200"> | <img src="docs/prints/novo-arquivo.png" width="200"> |
+
 ## Funções
 
 ### Código
+- **Prévia viva:** em um item, NPC ou projétil, mostra o cartão como no jogo, lendo o próprio código. Arrastar um controle muda o número na linha certa, e a raridade e o tipo de dano ficam a um toque.
+- Novo arquivo com item, arma, NPC, projétil, buff, bloco, parede, sistema, classe, tradução e mais.
 - Destaque de C#, barra de símbolos e várias abas de arquivos abertos.
 - Autocomplete com a API do Bunny instalado: classes, membros, overrides, `using` e classes do seu mod.
 - Modelos prontos que nascem de uma palavra: digite `espada` e a classe inteira aparece.
@@ -37,6 +43,8 @@ O app se chama **Bunny C# Studio**.
 ### Texturas
 - Editor em pixel com lápis, borracha, balde, linha, retângulo, círculo, seleção e conta-gotas.
 - Camadas, quadros de animação, espelho, paleta, prévia e zoom com dois dedos.
+- Nova textura para o conteúdo do mod, com as classes que ainda não têm imagem, ou para trocar imagens do jogo em um pacote.
+- Seletor de cor com mira e lupa, para ver a cor mesmo com o dedo em cima.
 
 ### Pacotes e fontes
 - Mods em C#, pacotes de texturas e pacotes de fontes.

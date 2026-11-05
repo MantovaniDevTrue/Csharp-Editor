@@ -55,14 +55,19 @@ async function useSnippet(s) {
   if (!/^[A-Za-z_]\w*$/.test(r.cls)) { toast("Use um nome de classe C# válido."); return; }
   const path = `${s.folder}/${r.cls}.cs`;
   if (files()[path] !== undefined) { toast("Já existe um arquivo com esse nome."); return; }
-  const { text, stops } = expandSnippet(s.body, { NS: projectNamespace(s.folder), DIR: s.folder, 1: r.cls });
+  createFromModel(s, path);
+}
+// A pasta e o nome vêm do caminho: o namespace acompanha a pasta, e a textura fica ao lado da classe.
+function createFromModel(s, path) {
+  const parts = path.split("/"), cls = parts.pop().replace(/\.cs$/, ""), dir = parts.join("/");
+  const { text, stops } = expandSnippet(s.body, { NS: projectNamespace(dir), DIR: dir, 1: cls });
   files()[path] = text;
   // Sem o PNG o mod carrega com textura quebrada: entra um provisório, fácil de trocar.
   if (s.texture) {
-    const png = `${s.folder}/${r.cls}.png`;
+    const png = `${dir ? dir + "/" : ""}${cls}.png`;
     if (files()[png] === undefined) files()[png] = b64ToBytes(STARTER_PNG);
   }
-  if (s.loc) addTranslation(s.loc, r.cls);
+  if (s.loc) addTranslation(s.loc, cls);
   scheduleSave();
   openFile(path);
   setView("code");

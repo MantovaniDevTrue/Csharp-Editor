@@ -6,4 +6,6 @@ tutorial.css
 folhas-e-paginas.css
 identidade.css
 telas.css
+seletor.css
+previa-viva.css
 editor-de-textura.css
