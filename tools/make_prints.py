@@ -97,6 +97,17 @@ def main() -> int:
         shot("textura")
         page.evaluate("document.querySelector('[data-panel=layers]').click()")
         shot("camadas")
+        page.evaluate("document.querySelector('#pixel').close()")
+        page.evaluate("""(async () => {
+          const m = starterJsMod('meu_mod_js', 'Meu Mod JS'); state.mods[m.uid] = m; await switchMod(m.uid);
+          const s = JS_FILE_SNIPPETS.find((x) => x.prefix === 'bsword');
+          createFromModel(s, 'content/Content/Items/Weapons/Lamina.js');
+          session = null; settings.liveOpen = false; renderLive(); src.blur(); src.setSelectionRange(0, 0); src.scrollTop = 0; syncScroll();
+        })()""")
+        page.wait_for_timeout(300)
+        shot("javascript")
+        page.evaluate("openConverter(); converter.index = converter.result.report.findIndex((r) => r.from.endsWith('Lamina.js')); renderConverter()")
+        shot("conversor")
         browser.close()
     print("PRINTS", len(list(out.glob("*.png"))))
     return 0

@@ -1,0 +1,36 @@
+/* Conversor de JavaScript para C# */
+.modlang { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 8px; padding: 7px 10px; background: var(--slot); clip-path: var(--px); box-shadow: inset 0 0 0 2px var(--slot-line); font-size: 13px; color: var(--muted); }
+.modlang[hidden] { display: none; }
+.modlang span { flex: 1 1 140px; min-width: 0; }
+.modlang b { color: #f7df1e; font-family: var(--f-pixel); }
+#convert[open] { display: flex; flex-direction: column; overflow: hidden; }
+#cvInfo { margin: 0; padding: 6px 12px; font-size: 13px; color: var(--muted); }
+.cvfiles { display: flex; gap: 4px; padding: 0 12px 6px; overflow-x: auto; scrollbar-width: none; flex: none; }
+.cvfiles::-webkit-scrollbar { display: none; }
+.cvfiles button, .cvtabs button { flex: none; min-height: 34px; padding: 0 10px; font: 500 13.5px var(--f-pixel); color: var(--muted); background: var(--slot); border: 0; clip-path: var(--px); box-shadow: inset 0 0 0 2px var(--slot-line); }
+.cvfiles button[aria-pressed="true"], .cvtabs button[aria-pressed="true"] { color: var(--on-gold); background: var(--gold); box-shadow: inset 0 0 0 2px var(--outline); }
+.cvfiles b { margin-left: 6px; padding: 0 5px; font: 700 11px var(--f-ui); color: #fff; background: var(--warn-strong, #b5651d); }
+.cvtabs { display: flex; gap: 4px; padding: 0 12px 6px; flex: none; }
+.cvtabs button { flex: 1; }
+.cvpanes { flex: 1 1 0; min-height: 120px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; padding: 0 12px; }
+.cvpanes[data-side="cs"] .cvpane[data-side="js"], .cvpanes[data-side="js"] .cvpane[data-side="cs"] { display: none; }
+.cvpane { min-width: 0; min-height: 0; display: flex; flex-direction: column; background: var(--ed-bg); box-shadow: inset 0 0 0 2px var(--outline); }
+.cvpane h3 { margin: 0; padding: 5px 9px; font: 500 13px var(--f-pixel); color: var(--muted); background: var(--panel); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cvcode { flex: 1; min-height: 0; margin: 0; padding: 6px 0; overflow: auto; font: 12.5px/1.55 var(--f-code); color: var(--ink); white-space: pre; tab-size: 4; }
+.cvl { display: block; padding-right: 12px; }
+.cvl i { display: inline-block; width: 3.2em; margin-right: 8px; padding-right: 6px; text-align: right; font-style: normal; color: var(--muted); opacity: .6; user-select: none; }
+.cvl.mark { background: color-mix(in srgb, var(--warn) 18%, transparent); box-shadow: inset 3px 0 0 var(--warn); }
+.cvl.flash { animation: lineflash .8s ease-out; }
+.cvnotes { flex: 0 1 auto; max-height: 26dvh; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding: 6px 12px; }
+.cvnote { display: flex; flex-direction: column; gap: 1px; padding: 6px 9px; text-align: left; font-size: 13px; line-height: 1.3; color: var(--ink); background: var(--slot); border: 0; box-shadow: inset 3px 0 0 var(--warn); }
+.cvnote small { font: 500 11.5px var(--f-pixel); color: var(--warn); }
+.cvok { margin: 0; font-size: 13px; color: var(--muted); }
+.cvfoot { flex: none; padding: 6px 12px calc(8px + env(safe-area-inset-bottom)); background: var(--panel); border-top: 2px solid var(--slot-line); }
+.cvfoot .modsend { width: 100%; margin: 0; }
+/* Tela larga: os dois lados juntos, sem abas. */
+@media (min-width: 760px) {
+  .cvtabs { display: none; }
+  .cvpanes { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .cvpanes .cvpane[data-side] { display: flex !important; }
+}
+@media (max-height: 520px) { .cvnotes { max-height: 22dvh; } #cvInfo { display: none; } }

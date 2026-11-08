@@ -8,6 +8,7 @@ async function runCompile() {
   state.dll = null; $("dlDll").hidden = true; $("sendBunny2").hidden = true;
   closePopup();
   try {
+    if (isJsProject()) { runJsCheck(); return; }
     const quick = quickCheck(files());
     // O Bunny recusa um manifest inválido: compilar aqui daria um falso "Compilou".
     const manifestErrors = manifestProblems(files());
@@ -114,3 +115,26 @@ async function runCompile() {
   }
 }
 
+// Mod em JavaScript: não há o que compilar. A verificação acha o que daria erro ao carregar no jogo.
+function runJsCheck() {
+  const manifestErrors = manifestProblems(files());
+  const problems = [...manifestErrors, ...checkJs(files())];
+  state.problems = problems;
+  setView("out");
+  const errs = problems.filter((p) => p.sev === "error").length, warns = problems.length - errs;
+  const count = Object.keys(files()).filter(isJsSource).length;
+  const runs = bunnyRunsJs();
+  const versionNote = (out) => {
+    if (runs.known && !runs.ok) out.append(para(`O Bunny instalado é a versão ${runs.version}, que não carrega mods em JavaScript. Eles só rodam até a ${JS_LAST_BUNNY} da tag js-final. Para usar no Bunny atual, converta o mod para C#.`));
+  };
+  if (errs) {
+    showOutput("fail", `Verificação: ${plural(errs, "erro", "erros")}`, (out) => { out.append(renderProblems(problems)); out.append(para("O Bunny recusaria o mod ou pararia nele ao abrir o jogo.")); });
+    return;
+  }
+  if (window.BunnyAndroid) $("sendBunny2").hidden = false;
+  showOutput("ok", warns ? `Verificado, com ${plural(warns, "aviso", "avisos")}` : "Verificado: nenhum problema", (out) => {
+    out.append(para(`${plural(count, "arquivo", "arquivos")} .js. JavaScript não é compilado: aqui só dá para conferir a escrita, os nomes da API e o pacote. Erros de lógica só aparecem no jogo.`));
+    versionNote(out);
+    if (problems.length) out.append(renderProblems(problems));
+  });
+}

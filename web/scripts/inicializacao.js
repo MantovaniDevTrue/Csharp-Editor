@@ -3,6 +3,7 @@ $("compile").addEventListener("click", runCompile);
 $("exportBtn").addEventListener("click", exportMod);
 $("newMod").addEventListener("click", newMod);
 $("liveBar").addEventListener("click", toggleLive);
+$("convertBtn").addEventListener("click", () => openConverter());
 $("newFile").addEventListener("click", () => newFile());
 $("newTexture").addEventListener("click", () => newTexture());
 $("fontBtn").addEventListener("click", pickFontFile);

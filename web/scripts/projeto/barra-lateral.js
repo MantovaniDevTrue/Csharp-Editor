@@ -23,6 +23,7 @@ function renderModCard() {
   refreshBridge();
   $("modFolder").hidden = !bridge.connected;
   $("fontBtn").hidden = packTypeOf(files()) !== "font";
+  $("modLang").hidden = !isJsProject();
   const m = manifestOf(mod());
   const status = manifestStatus(mod());
   $("modName").textContent = m.name || "Mod sem nome";

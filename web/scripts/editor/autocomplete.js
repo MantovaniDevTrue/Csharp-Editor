@@ -121,7 +121,7 @@ function prepareSnippet(s, start, end) {
   if (s.using && !new RegExp(`\\busing\\s+${s.using.replace(/\./g, "\\.")}\\s*;`).test(src.value)) addUsings = `using ${s.using};\n`;
   if (!s.folder) return { body, vars, addUsings };
   const text = src.value.slice(0, start) + src.value.slice(end); // sem a palavra que está sendo trocada
-  const fileName = (state.active || "").split("/").pop().replace(/\.cs$/, "");
+  const fileName = (state.active || "").split("/").pop().replace(/\.(cs|js)$/, "");
   if (!/\bclass\s/.test(text) && /^[A-Za-z_]\w*$/.test(fileName)) vars[1] = fileName;
   if (text.trim()) {
     const header = /^(?:using [^;]+;\n)+\nnamespace «NS»;\n\n/.exec(body);
@@ -146,6 +146,7 @@ function smartInsert(s, start, end) {
 }
 // O nome que aparece no jogo vem das traduções: cada conteúdo novo já entra lá com o nome da classe.
 function addTranslation(category, cls) {
+  if (isJsProject()) { addTranslationJs(category, cls); return; }
   const path = `Localization/pt-BR_Mods.${projectId()}.hjson`;
   const name = cls.replace(/([a-z0-9])([A-Z])/g, "$1 $2");
   const text = typeof files()[path] === "string" ? files()[path] : "";

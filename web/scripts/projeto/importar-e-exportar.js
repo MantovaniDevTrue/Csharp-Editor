@@ -42,6 +42,14 @@ async function sendToBunny() {
     toast("Corrija os erros antes de enviar.");
     return;
   }
+  if (isJsProject()) {
+    const runs = bunnyRunsJs();
+    if (runs.known && !runs.ok) {
+      const r = await ask({ title: "Este Bunny não roda JavaScript", text: `O Bunny instalado é a versão ${runs.version}. Mods em JavaScript só carregam até a ${JS_LAST_BUNNY} (tag js-final), e esta versão recusa o pacote. Converta o mod para C# para usar no Bunny atual.`, ok: "Converter para C#", extra: "Enviar mesmo assim" });
+      if (!r) return;
+      if (!r.extra) { openConverter(); return; }
+    }
+  }
   // Com a pasta do Bunny conectada, o mod vai direto para ModSources.
   refreshBridge();
   if (bridge.connected) { await saveToBunnyFolder(true); return; }

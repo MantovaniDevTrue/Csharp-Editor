@@ -27,8 +27,9 @@ function renderTree() {
   const all = Object.keys(files());
   const q = normWord($("fileSearch").value.trim());
   const paths = q ? all.filter((p) => normWord(p).includes(q)) : all;
-  const csCount = all.filter((p) => p.endsWith(".cs")).length;
-  $("fileCount").textContent = `${csCount} .cs`;
+  const ext = isJsProject() ? ".js" : ".cs";
+  const csCount = all.filter((p) => p.endsWith(ext)).length;
+  $("fileCount").textContent = `${csCount} ${ext}`;
   const rows = [];
   const activeFolder = state.active?.includes("/") ? state.active.split("/").slice(0, -1).join("/") : "";
   const fileRow = (path, depth) => {

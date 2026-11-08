@@ -34,6 +34,7 @@
         </div>
         <p class="modsum" id="modSummary"></p>
         <div class="modalert" id="modAlert" hidden></div>
+        <div class="modlang" id="modLang" hidden><span><b>JavaScript</b> · Bunny até a 0.4.0</span><button class="btn small" id="convertBtn" type="button">Converter para C#</button></div>
         <button class="btn modsend" id="sendBunny" type="button" hidden data-icon="send"><span>Enviar para o Bunny</span></button>
         <div class="modgrid">
           <button class="btn" id="editMod" type="button" data-icon="edit"><span>Editar dados</span></button>
@@ -164,6 +165,18 @@
   </div>
   <p id="msInfo"></p>
   <div id="msResults"></div>
+</dialog>
+<dialog id="convert" class="page" aria-label="Converter para C#">
+  <div class="mshead"><button class="btn small" id="cvClose" type="button">Voltar</button><h2>Converter para C#</h2></div>
+  <p id="cvInfo"></p>
+  <div class="cvfiles" id="cvFiles" role="group" aria-label="Arquivo"></div>
+  <div class="cvtabs" id="cvTabs" role="group" aria-label="Lado"><button type="button" data-side="js" aria-pressed="false">JavaScript</button><button type="button" data-side="cs" aria-pressed="true">C#</button></div>
+  <div class="cvpanes" id="cvPanes" data-side="cs">
+    <section class="cvpane" data-side="js"><h3 id="cvFrom"></h3><pre class="cvcode" id="cvJs"></pre></section>
+    <section class="cvpane" data-side="cs"><h3 id="cvTo"></h3><pre class="cvcode" id="cvCs"></pre></section>
+  </div>
+  <div class="cvnotes" id="cvNotes"></div>
+  <div class="cvfoot"><button class="btn modsend" id="cvCreate" type="button" data-icon="plus"><span>Criar o mod em C#</span></button></div>
 </dialog>
 <dialog id="settings" class="page"><div id="settingsBody"></div></dialog>
 

@@ -106,6 +106,7 @@ function liveDamageClass(info) {
   return /DamageClass\.(\w+)/.exec(info.values.DamageType?.text || "")?.[1] || "";
 }
 function liveTranslation(cls, key) {
+  if (isJsProject()) return jsTranslation(cls, key);
   const text = files()[`Localization/pt-BR_Mods.${projectId()}.hjson`];
   if (typeof text !== "string") return "";
   const block = new RegExp(`\\b${cls}\\s*:\\s*\\{([^}]*)\\}`).exec(text);
@@ -154,9 +155,11 @@ function liveLines(info) {
   return lines;
 }
 function liveTexturePath(info) {
+  if (info.js) return info.path.split("/").slice(0, -1).concat(info.c.name + ".png").join("/");
   return textureOfClass({ ns: info.ns, name: info.c.name, path: info.path });
 }
 function liveHasCustomTexture(info) {
+  if (info.js) return /\bget\s+Texture\s*\(/.test(info.text);
   const { c, sig } = info;
   for (let i = c.open; i < c.close; i++) if (sig[i].v === "Texture" && sig[i - 1]?.t === "id" && sig[i + 1]?.v === "=>") return true;
   return false;
@@ -260,7 +263,8 @@ function liveDrawControls(info) {
   }
 }
 function liveCurrent() {
-  if (!state.active?.endsWith(".cs") || typeof files()[state.active] !== "string") return null;
+  if (!/\.(cs|js)$/.test(state.active || "") || typeof files()[state.active] !== "string") return null;
+  if (state.active.endsWith(".js")) return liveParseJs(src.value, src.selectionStart);
   return liveParse(src.value, src.selectionStart);
 }
 function renderLive() {
@@ -315,7 +319,7 @@ function liveShowLine(at) {
 function liveWrite(prop, value, needsUsing) {
   const info = liveCurrent();
   if (!info) return;
-  const entry = info.values[prop], ent = info.kind.entity, text = src.value;
+  const entry = info.values[prop], ent = (info.js ? "this." : "") + info.kind.entity, text = src.value;
   let at;
   if (entry) {
     liveReplace(entry.start, entry.end, value);
@@ -332,11 +336,11 @@ function liveWrite(prop, value, needsUsing) {
     }
   } else {
     const open = info.sig[info.c.open].e, unit = indentUnit();
-    const block = `\n${unit}public override void SetDefaults()\n${unit}{\n${unit}${unit}${ent}.${prop} = ${value};\n${unit}}\n`;
+    const block = info.js ? `\n${unit}SetDefaults() {\n${unit}${unit}${ent}.${prop} = ${value};\n${unit}}\n` : `\n${unit}public override void SetDefaults()\n${unit}{\n${unit}${unit}${ent}.${prop} = ${value};\n${unit}}\n`;
     liveReplace(open, open, block);
     at = open + block.indexOf(ent + ".");
   }
-  if (needsUsing && !new RegExp(`\\busing\\s+${needsUsing.replace(/\./g, "\\.")}\\s*;`).test(src.value)) {
+  if (needsUsing && !info.js && !new RegExp(`\\busing\\s+${needsUsing.replace(/\./g, "\\.")}\\s*;`).test(src.value)) {
     const add = `using ${needsUsing};\n`;
     liveReplace(0, 0, add);
     at += add.length;

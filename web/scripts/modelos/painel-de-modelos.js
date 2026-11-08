@@ -1,7 +1,8 @@
 // ---------- Painel de snippets ----------
 let snipGroup = "Tudo";
-const GROUP_ORDER = ["Tudo", "Itens", "Combate", "Equipamento", "Efeitos", "C#", "Trechos"];
 function renderSnippets() {
+  const GROUP_ORDER = ["Tudo", ...new Set(snippetsNow().map((s) => s.group))];
+  if (!GROUP_ORDER.includes(snipGroup)) snipGroup = "Tudo";
   $("snipChips").replaceChildren(...GROUP_ORDER.map((g) => {
     const b = document.createElement("button");
     b.type = "button"; b.textContent = g; b.setAttribute("aria-pressed", String(g === snipGroup));
@@ -12,7 +13,7 @@ function renderSnippets() {
   const box = $("snips");
   box.replaceChildren();
   const groups = new Map();
-  for (const s of ALL_SNIPPETS) {
+  for (const s of snippetsNow()) {
     if (snipGroup !== "Tudo" && s.group !== snipGroup) continue;
     if (q && !normWord(`${s.title} ${s.desc} ${s.prefix} ${s.keys || ""} ${s.group}`).includes(q)) continue;
     if (!groups.has(s.group)) groups.set(s.group, []);
@@ -39,10 +40,11 @@ function renderSnippets() {
 }
 async function useSnippet(s) {
   if (!s.folder) {
-    const isCode = typeof files()[state.active] === "string" && state.active.endsWith(".cs");
-    if (!isCode) { toast("Abra um arquivo .cs para inserir este modelo."); return; }
+    const ext = isJsProject() ? ".js" : ".cs";
+    const isCode = typeof files()[state.active] === "string" && state.active.endsWith(ext);
+    if (!isCode) { toast(`Abra um arquivo ${ext} para inserir este modelo.`); return; }
     const where = { top: "fora de uma classe", member: "no corpo de uma classe", code: "dentro de um método" }[s.where || "code"];
-    const here = editContext(src.value, src.selectionStart);
+    const here = ext === ".js" ? jsEditContext(src.value, src.selectionStart) : editContext(src.value, src.selectionStart);
     const text = expandSnippet(s.body, { NS: projectNamespace(), CLASS: enclosingClass(src.value, src.selectionStart) }).text;
     const r = await ask({ title: s.title, text: here === (s.where || "code") ? s.desc : `${s.desc} Este modelo costuma ir ${where}; confira a posição do cursor.`, preview: text, ok: "Inserir no cursor" });
     if (!r) return;
@@ -52,14 +54,14 @@ async function useSnippet(s) {
   }
   const r = await ask({ title: s.title, text: s.desc, preview: expandSnippet(s.body, { NS: projectNamespace(s.folder), DIR: s.folder, 1: s.cls }).text, fields: [{ name: "cls", label: "Nome da classe", value: s.cls }], ok: "Criar arquivo" });
   if (!r) return;
-  if (!/^[A-Za-z_]\w*$/.test(r.cls)) { toast("Use um nome de classe C# válido."); return; }
-  const path = `${s.folder}/${r.cls}.cs`;
+  if (!/^[A-Za-z_]\w*$/.test(r.cls)) { toast("Use um nome de classe válido: letras, números ou _, sem espaços."); return; }
+  const path = `${s.folder}/${r.cls}${s.folder.startsWith("content/") ? ".js" : ".cs"}`;
   if (files()[path] !== undefined) { toast("Já existe um arquivo com esse nome."); return; }
   createFromModel(s, path);
 }
 // A pasta e o nome vêm do caminho: o namespace acompanha a pasta, e a textura fica ao lado da classe.
 function createFromModel(s, path) {
-  const parts = path.split("/"), cls = parts.pop().replace(/\.cs$/, ""), dir = parts.join("/");
+  const parts = path.split("/"), cls = parts.pop().replace(/\.(cs|js)$/, ""), dir = parts.join("/");
   const { text, stops } = expandSnippet(s.body, { NS: projectNamespace(dir), DIR: dir, 1: cls });
   files()[path] = text;
   // Sem o PNG o mod carrega com textura quebrada: entra um provisório, fácil de trocar.

@@ -41,7 +41,7 @@ function pressTab() {
   if (session) { nextStop(1); return; }
   const at = src.selectionStart;
   const word = /[a-z]+$/.exec(src.value.slice(Math.max(0, at - 24), at));
-  const hit = word && src.selectionEnd === at && state.active?.endsWith(".cs") && ALL_SNIPPETS.find((s) => s.prefix === word[0]);
+  const hit = word && src.selectionEnd === at && /\.(cs|js)$/.test(state.active || "") && (state.active.endsWith(".js") ? JS_SNIPPETS : ALL_SNIPPETS).find((s) => s.prefix === word[0]);
   if (hit) { smartInsert(hit, at - word[0].length, at); return; }
   if (src.selectionStart !== src.selectionEnd) { indentSelection(false); return; }
   replaceRange(at, at, indentUnit());
@@ -69,7 +69,7 @@ src.addEventListener("keydown", (e) => {
 });
 const PAIRS = { "(": ")", "[": "]", "{": "}", '"': '"' };
 function autoPair(e) {
-  if (!settings.autoPairs || session || !state.active?.endsWith(".cs") || e.inputType !== "insertText" || !e.data || e.data.length !== 1) return;
+  if (!settings.autoPairs || session || !/\.(cs|js)$/.test(state.active || "") || e.inputType !== "insertText" || !e.data || e.data.length !== 1) return;
   const at = src.selectionStart, next = src.value[at] || "", typed = e.data;
   // Digitar o fechamento que já está na frente só passa por cima dele.
   if (")]}\"".includes(typed) && next === typed) {

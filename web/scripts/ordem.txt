@@ -1,5 +1,6 @@
 # Ordem de carregamento: os scripts dividem o mesmo escopo.
 nucleo/dados.js
+terceiros/acorn.js
 cenario/cenario.js
 nucleo/configuracoes.js
 nucleo/utilidades.js
@@ -8,10 +9,15 @@ csharp/lexer.js
 csharp/indice-api.js
 csharp/manifest.js
 csharp/verificacao-rapida.js
+javascript/lexer-js.js
+javascript/indice-js.js
+javascript/projeto-js.js
+javascript/verificacao-js.js
 modelos/modelos.js
 modelos/trechos.js
 modelos/csharp.js
 modelos/expansao.js
+javascript/modelos-js.js
 nucleo/zip.js
 nucleo/estado.js
 editor/editor.js
@@ -19,6 +25,8 @@ editor/busca-e-estrutura.js
 editor/paradas-do-tab.js
 editor/autocomplete.js
 editor/simbolos-do-mod.js
+javascript/autocomplete-js.js
+javascript/previa-js.js
 editor/previa-viva.js
 editor/teclado.js
 projeto/arvore.js
@@ -35,6 +43,9 @@ projeto/importar-e-exportar.js
 projeto/busca-no-mod.js
 projeto/icone-do-mod.js
 projeto/vista-e-mods.js
+conversor/js-para-cs.js
+conversor/pacote-cs.js
+conversor/tela-conversor.js
 telas/tutorial.js
 telas/configuracoes.js
 testes/mod-de-teste.js

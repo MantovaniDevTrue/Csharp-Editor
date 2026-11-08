@@ -27,7 +27,7 @@ function classify(tokens, i) {
 function render() {
   const text = src.value;
   const path = state.active;
-  const isCs = path && path.endsWith(".cs");
+  const isCs = path && path.endsWith(".cs"), isJs = path && path.endsWith(".js");
   const byLine = new Map();
   for (const p of [...state.problems, ...state.live]) {
     if (p.path !== path || !p.line) continue;
@@ -35,10 +35,10 @@ function render() {
     list.push(p); byLine.set(p.line, list);
   }
   const rows = [[]];
-  if (isCs) {
-    const { tokens } = lex(text);
+  if (isCs || isJs) {
+    const { tokens } = isJs ? lexJs(text) : lex(text);
     tokens.forEach((t, i) => {
-      const cls = classify(tokens, i);
+      const cls = isJs ? classifyJs(tokens, i) : classify(tokens, i);
       const pieces = t.v.split("\n");
       pieces.forEach((piece, k) => {
         if (k > 0) rows.push([]);
@@ -176,6 +176,10 @@ function onEdit() {
 function liveCheck() {
   const path = state.active;
   if (path === "manifest.json") { state.live = manifestProblems(files()).filter((p) => p.line); queueRender(); return; }
+  if (path && isJsSource(path) && typeof files()[path] === "string") {
+    if (completion || session) { liveTimer = setTimeout(liveCheck, 1000); return; }
+    state.live = checkJs(files(), path); queueRender(); return;
+  }
   if (!path || !isSource(path) || typeof files()[path] !== "string") return;
   // Enquanto se escolhe uma sugestão ou se preenche um modelo, o código ainda está pela metade.
   if (completion || session) { liveTimer = setTimeout(liveCheck, 1000); return; }

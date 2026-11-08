@@ -22,6 +22,7 @@ function applyFix(problem) {
   const path = problem.path, fix = problem.fix;
   if (fix.kind === "repair") repairManifest();
   if (fix.kind === "migrate") { migrateMod(mod()); afterStructureFix(); return; }
+  if (fix.kind === "jsentry") { files()[fix.path] = jsModClassSource(fix.id); afterStructureFix(); return; }
   if (fix.kind === "entry") { files()[fix.id + ".cs"] = modClassSource(fix.id); afterStructureFix(); return; }
   const text = fix.kind === "repair" ? files()["manifest.json"] : fixedText(files()[path], fix);
   files()[path] = text;

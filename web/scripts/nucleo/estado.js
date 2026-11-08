@@ -147,6 +147,7 @@ const manifestOf = (m) => {
   try { return { ...(m.lastManifest ? JSON.parse(m.lastManifest) : {}), ...(status.data || {}) }; } catch { return status.data || {}; }
 };
 function repairManifest(m = mod()) {
+  if (langOf(m.files) === "js") { if (!manifestStatus(m).ok) repairJsManifest(m); return; }
   if (Object.keys(m.files).some((k) => k.startsWith("content/"))) { migrateMod(m); m.lastManifest = m.files["manifest.json"]; return; }
   const status = manifestStatus(m);
   if (status.ok) return;

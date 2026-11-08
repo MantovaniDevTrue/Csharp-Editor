@@ -39,7 +39,30 @@ function classesWithoutTexture() {
     return [{ id: "missing-" + c.name, title: c.name, desc: `${kind.label} do seu mod, ainda sem imagem.`, icon: "edit", path, w: size.w || kind.w, h: size.h || kind.h }];
   });
 }
+// Em um mod JavaScript, a textura fica ao lado do .js, com o nome da classe.
+function jsClassesWithoutTexture() {
+  const out = [];
+  for (const [path, text] of Object.entries(files())) {
+    if (!isJsSource(path) || typeof text !== "string") continue;
+    const dir = path.split("/").slice(0, -1).join("/");
+    for (const m of text.matchAll(/\bexport\s+class\s+(\w+)\s+extends\s+(\w+)/g)) {
+      const kind = MOD_TEXTURES[jsRootOf(m[2])];
+      const png = `${dir}/${m[1]}.png`;
+      if (!kind || files()[png] !== undefined || /\bget\s+Texture\s*\(/.test(text)) continue;
+      const read = (prop) => Number((new RegExp(`this\\.(?:Item|NPC|Projectile)\\.${prop}\\s*=\\s*(\\d+)`).exec(text) || [])[1]) || 0;
+      out.push({ id: "missing-" + m[1], title: m[1], desc: `${kind.label} do seu mod, ainda sem imagem.`, icon: "edit", path: png, w: read("width") || kind.w, h: read("height") || kind.h });
+    }
+  }
+  return out;
+}
 function textureChoices(pack) {
+  if (isJsProject()) {
+    const missing = jsClassesWithoutTexture();
+    const fresh = Object.entries(MOD_TEXTURES).map(([base, k]) => ({ id: base, title: k.label + " novo", desc: k.desc, path: `content/${k.folder}/${k.name}.png`, w: k.w, h: k.h }));
+    const extras = [{ id: "loose", title: "Imagem solta", desc: "Para usar pelo caminho no código.", path: "content/Assets/Textures/MinhaImagem.png", w: 32, h: 32 }];
+    if (files()["icon.png"] === undefined) extras.unshift({ id: "icon", title: "Ícone do mod", desc: "Aparece na lista de mods do Bunny.", path: "icon.png", w: 80, h: 80 });
+    return [missing.length && { name: `Sem textura (${missing.length})`, items: missing }, { name: "Conteúdo novo", items: fresh }, { name: "Outras", items: extras }].filter(Boolean);
+  }
   if (pack === "font") return [{ name: "Fonte", items: [{ id: "sheet", title: "Folha da fonte", desc: "Imagem usada pelo .json da fonte.", path: "Fonts/NovaFolha.png", w: 256, h: 256 }] }];
   if (pack === "texture") return [{ name: "Trocar no jogo", items: GAME_TEXTURES }];
   const missing = classesWithoutTexture();
@@ -52,6 +75,7 @@ const TEXTURE_TEXT = {
   texture: "Este projeto é um pacote de texturas: ele só troca imagens que já existem no jogo. Para um item novo, com textura própria, use um mod em C#.",
   font: "Este projeto é um pacote de fontes. Em um mod em C#, as texturas podem ser de itens e NPCs novos.",
   code: "Para que é a textura? Ela precisa ter o mesmo nome e a mesma pasta da classe: é assim que o jogo a encontra.",
+  js: "Para que é a textura? Ela fica ao lado do arquivo .js, com o nome da classe: é assim que o jogo a encontra.",
 };
 async function newTexture(suggested, size) {
   const pack = packTypeOf(files());
@@ -67,7 +91,7 @@ async function newTexture(suggested, size) {
   };
   const r = await ask({
     title: "Nova textura",
-    text: TEXTURE_TEXT[pack] || TEXTURE_TEXT.code,
+    text: TEXTURE_TEXT[pack] || (isJsProject() ? TEXTURE_TEXT.js : TEXTURE_TEXT.code),
     focus: false,
     fields: [{ name: "path", label: "Caminho", value: first.path }, { name: "w", label: "Largura", value: String(size?.w || first.w) }, { name: "h", label: "Altura", value: String(size?.h || first.h) }],
     ok: "Criar",

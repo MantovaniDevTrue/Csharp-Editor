@@ -8,4 +8,5 @@ identidade.css
 telas.css
 seletor.css
 previa-viva.css
+conversor.css
 editor-de-textura.css

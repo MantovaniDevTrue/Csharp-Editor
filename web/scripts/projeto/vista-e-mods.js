@@ -29,13 +29,13 @@ function renderModsWindow() {
   rows.className = "modlist";
   list.forEach((m, i) => {
     const info = manifestOf(m), status = manifestStatus(m);
-    const csFiles = Object.keys(m.files).filter((p) => p.endsWith(".cs")).length;
+    const csFiles = Object.keys(m.files).filter((p) => p.endsWith(langOf(m.files) === "js" ? ".js" : ".cs")).length;
     const row = document.createElement("div");
     row.className = "modrow" + (m.uid === state.uid ? " on" : "");
     row.style.animationDelay = Math.min(i, 10) * 18 + "ms";
     const main = document.createElement("button");
     main.type = "button"; main.className = "main";
-    main.innerHTML = `<b>${esc(info.name || "Mod sem nome")}</b><small class="${status.ok ? "" : "bad"}">${esc(status.ok ? `${info.id} · v${info.version} · ${csFiles} .cs` : status.missing ? "sem manifest.json: abra para recriar" : "manifest.json com problema")}</small>`;
+    main.innerHTML = `<b>${esc(info.name || "Mod sem nome")}</b><small class="${status.ok ? "" : "bad"}">${esc(status.ok ? `${info.id} · v${info.version} · ${csFiles} ${langOf(m.files) === "js" ? ".js" : ".cs"}` : status.missing ? "sem manifest.json: abra para recriar" : "manifest.json com problema")}</small>`;
     main.addEventListener("click", async () => { $("mods").close(); if (m.uid !== state.uid) { await switchMod(m.uid); setView("files"); } haptic("tap"); });
     onLongPress(main, () => modMenu(m), row);
     const control = (label, text, className, action, disabled) => {

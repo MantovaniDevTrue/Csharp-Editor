@@ -20,9 +20,9 @@ O app se chama **Bunny C# Studio**.
 |---|---|---|---|
 | <img src="docs/prints/modelos.png" width="200"> | <img src="docs/prints/erros.png" width="200"> | <img src="docs/prints/busca.png" width="200"> | <img src="docs/prints/textura.png" width="200"> |
 
-| Prévia viva | Novo arquivo |
-|---|---|
-| <img src="docs/prints/previa.png" width="200"> | <img src="docs/prints/novo-arquivo.png" width="200"> |
+| Prévia viva | Novo arquivo | Mod em JavaScript | Conversor para C# |
+|---|---|---|---|
+| <img src="docs/prints/previa.png" width="200"> | <img src="docs/prints/novo-arquivo.png" width="200"> | <img src="docs/prints/javascript.png" width="200"> | <img src="docs/prints/conversor.png" width="200"> |
 
 ## Funções
 
@@ -39,6 +39,13 @@ O app se chama **Bunny C# Studio**.
 - Erros em português: o que você escreveu, o motivo e como deveria ficar.
 - **Corrigir agora** nos erros que têm uma única resposta certa.
 - Conferência do `manifest.json` com as regras do Bunny antes de compilar.
+
+### JavaScript
+- Mods em JavaScript para o Bunny até a 0.4.0 (tag `js-final`), no formato daquela versão: `blVersion` 2 e tudo dentro de `content/`.
+- Destaque, autocomplete com a API JS do Bunny e com os campos do jogo, ganchos com os parâmetros certos e os mesmos modelos dos mods em C#.
+- **Verificar** no lugar de compilar: erros de escrita em português, classes e métodos com nome errado, `import` de arquivo que não existe e o `manifest.json` com as regras daquela versão. Erros de lógica só aparecem no jogo.
+- Aviso quando o Bunny instalado já não carrega JavaScript.
+- **Conversor para C#:** mostra cada arquivo em JavaScript e em C#, lado a lado, e cria um mod novo no formato atual. Troca classes, ganchos, `this.Item`, `Terraria.ID.ItemID`, hooks da ponte (`On_Item.SetDefaults +=`), textos e traduções; o que não tem equivalente direto fica marcado com `// Revisar:`. O mod em JavaScript continua igual.
 
 ### Texturas
 - Editor em pixel com lápis, borracha, balde, linha, retângulo, círculo, seleção e conta-gotas.
@@ -68,11 +75,14 @@ app/                    App Android em .NET 10
 web/                    Interface mostrada dentro do app
   index.html            Estrutura da página
   styles/               CSS, por área
-  data/                 Índice inicial da API (gerado)
+  data/                 Índices da API de C# e da API JavaScript (gerados)
   scripts/
     nucleo/             Estado, configurações, ZIP e utilidades
     editor/             Editor, autocomplete, busca e teclado
     csharp/             Lexer, API, manifest e verificação rápida
+    javascript/         Mods em JavaScript: lexer, API, verificação, modelos e autocomplete
+    conversor/          Conversor de mod JavaScript para C# e a tela dele
+    terceiros/          acorn, o leitor de JavaScript (licença MIT)
     modelos/            Modelos prontos e o painel deles
     compilador/         Compilação, explicação e correção dos erros
     projeto/            Árvore, barra lateral, mods, importar e exportar
@@ -86,6 +96,13 @@ tools/                  Build da interface, índice da API e traduções
 tests/                  Testes da interface e teste no emulador
 docs/prints/            Prints deste README, gerados pelo workflow "Prints do README"
 bunny-upstream.txt      Commit do Bunny Loader usado no build
+```
+
+O índice da API JavaScript vem da tag `js-final` do Bunny Loader:
+
+```sh
+git -C ../bunny-loader worktree add ../bunny-loader-js-final js-final
+BUNNY_JS_UPSTREAM=../bunny-loader-js-final python3 tools/generate_js_index.py
 ```
 
 Os scripts de `web/` dividem o mesmo escopo e viram uma página só no build. A ordem deles fica em `web/scripts/ordem.txt`, e arquivo novo precisa entrar nessa lista.

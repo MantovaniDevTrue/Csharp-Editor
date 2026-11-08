@@ -21,7 +21,8 @@ def join(folder: str) -> str:
 
 def page_html() -> str:
     sdk = (WEB / "data/sdk-index.json").read_text(encoding="utf-8")
-    scripts = join("scripts").replace("/*SDK_INDEX*/", "/*SDK_INDEX_START*/" + sdk + "/*SDK_INDEX_END*/", 1)
+    js_index = (WEB / "data/js-index.json").read_text(encoding="utf-8").strip()
+    scripts = join("scripts").replace("/*SDK_INDEX*/", "/*SDK_INDEX_START*/" + sdk + "/*SDK_INDEX_END*/", 1).replace("/*JS_INDEX*/", js_index, 1)
     page = (WEB / "index.html").read_text(encoding="utf-8")
     return page.replace("<!-- build:styles -->\n", join("styles"), 1).replace("<!-- build:scripts -->\n", scripts, 1)
 

@@ -129,6 +129,7 @@ function localNames(text, at) {
 
 function completions(force = false) {
   const text = src.value, at = src.selectionStart;
+  if (state.active?.endsWith(".js")) return completionsJs(force);
   if (!state.active?.endsWith(".cs") || src.selectionEnd !== at) return null;
   const before = text.slice(Math.max(0, at - 240), at);
   // Dentro de string ou comentário não sugere.
@@ -272,5 +273,5 @@ function acceptCompletion() {
   if (item.closeParen) { const caret = src.selectionStart; replaceRange(caret, caret, ")"); src.setSelectionRange(caret, caret); }
   session = null;
 }
-function dirForFolder(folder) { return state.active?.endsWith(".cs") ? (state.active.split("/").slice(0, -1).join("/") || folder) : folder; }
+function dirForFolder(folder) { return /\.(cs|js)$/.test(state.active || "") ? (state.active.split("/").slice(0, -1).join("/") || folder) : folder; }
 

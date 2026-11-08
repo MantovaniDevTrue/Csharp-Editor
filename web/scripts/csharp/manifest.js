@@ -31,6 +31,7 @@ function manifestProblems(all) {
     add({ title: "O manifest.json precisa ser um objeto", msg: "O conteúdo não começa com { e termina com }.", why: "O Bunny lê os campos do mod de dentro de um único objeto JSON.", good: '{\n  "id": "MeuMod",\n  "name": "Meu Mod"\n}', fix: { kind: "repair" } });
     return out;
   }
+  if (langOf(all) === "js") { jsManifestProblems(all, data, text, add); return out; }
   if (Object.keys(all).some((k) => k.startsWith("content/"))) {
     add({ title: "Este mod está no formato antigo do Bunny", msg: "O mod usa a pasta content/.", why: "O Bunny atual pede blVersion 3, a classe Mod em <id>.cs e as pastas Content/, Common/ e Assets/ na raiz. A conversão acerta as pastas e o manifest; o código feito com BunnyItem precisa ser reescrito com ModItem, porque a API mudou.", good: "public class MeuItem : ModItem", fix: { kind: "migrate" } });
     return out;

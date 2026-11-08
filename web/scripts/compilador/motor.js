@@ -8,7 +8,7 @@ function setEngine(status, text, title) {
   $("engine").setAttribute("aria-label", text);
 }
 async function detectEngine() {
-  $("compileLabel").textContent = engine.available ? "Compilar" : "Verificar";
+  updateCompileLabel();
   if (engine.available) {
     let info = {};
     try { info = JSON.parse(window.BunnyAndroid.bunnyInfo?.() || "{}"); } catch { /* segue sem a informação */ }
@@ -61,4 +61,8 @@ function sendCompile(sources) {
     engine.pending.set(id, (result) => { clearTimeout(timer); resolve(result); });
     window.BunnyAndroid.compile(id, JSON.stringify(sources));
   });
+}
+// Mod em JavaScript não compila: o botão só verifica.
+function updateCompileLabel() {
+  $("compileLabel").textContent = engine.available && !(state.uid && isJsProject()) ? "Compilar" : "Verificar";
 }

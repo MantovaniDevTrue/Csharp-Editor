@@ -10,7 +10,26 @@ public class «1:MinhaClasse»
 }
 ` };
 const MODEL_ICONS = { Itens: "edit", Combate: "send", Mundo: "grid", Sistemas: "size" };
+const EMPTY_JS_CLASS = { title: "Classe", body: `export class «1:MinhaClasse» {
+    «0»
+}
+` };
+function jsFileKinds() {
+  const groups = new Map();
+  for (const s of JS_FILE_SNIPPETS) {
+    if (!groups.has(s.group)) groups.set(s.group, []);
+    groups.get(s.group).push({ id: s.prefix, title: s.title, desc: s.desc, icon: MODEL_ICONS[s.group] || "edit", model: s, folder: s.folder, name: s.cls + ".js" });
+  }
+  const others = [
+    { id: "class", title: "Classe JavaScript", desc: "Uma classe vazia, para organizar o seu código. Use export para importar em outro arquivo.", icon: "path", model: EMPTY_JS_CLASS, folder: "content/Common", name: "MinhaClasse.js" },
+    { id: "texture", title: "Textura", desc: "Abre o editor de texturas.", icon: "texture", action: "texture" },
+    { id: "lang", title: "Tradução", desc: "Nomes e descrições que aparecem no jogo.", icon: "fonte", folder: "content/Localization", name: "pt-BR.json", locked: true },
+    { id: "blank", title: "Arquivo em branco", desc: "Qualquer tipo. Em um .js vazio, digite espada ou npc para a classe aparecer.", icon: "copy", folder: "content/Content", name: "NovoArquivo.js" },
+  ];
+  return [...groups].map(([name, items]) => ({ name, items })).concat({ name: "Outros", items: others });
+}
 function fileKinds() {
+  if (isJsProject()) return jsFileKinds();
   const pack = packTypeOf(files());
   const blank = { id: "blank", title: "Arquivo em branco", desc: "Qualquer tipo. Em um .cs vazio, digite espada ou asas para a classe aparecer.", icon: "copy", folder: "", name: "NovoArquivo.cs" };
   const texture = { id: "texture", title: "Textura", desc: "Abre o editor de texturas.", icon: "texture", action: "texture" };
@@ -38,7 +57,7 @@ async function newFile(suggested) {
   let goTexture = false, input, note;
   const describe = () => {
     const value = cleanPath(input.value) || "";
-    const png = value.replace(/\.cs$/, ".png");
+    const png = value.replace(/\.(cs|js)$/, ".png");
     note.textContent = kind?.model?.texture ? `Também cria ${png}, uma textura provisória para você desenhar.` : kind?.model ? "Só o arquivo de código." : "";
     note.hidden = !note.textContent;
   };
@@ -64,10 +83,11 @@ async function newFile(suggested) {
   if (!r) return;
   let path = cleanPath(r.path);
   if (!path) { toast("Caminho inválido."); return; }
-  if (kind?.model && !path.endsWith(".cs")) path += ".cs";
+  const ext = isJsProject() ? ".js" : ".cs";
+  if (kind?.model && !path.endsWith(ext)) path += ext;
   if (files()[path] !== undefined) { if (kind?.locked) { openFile(path); setView("code"); } else toast("Esse arquivo já existe."); return; }
   if (kind?.model) {
-    const cls = path.split("/").pop().replace(/\.cs$/, "");
+    const cls = path.split("/").pop().replace(/\.(cs|js)$/, "");
     if (!/^[A-Za-z_]\w*$/.test(cls)) { toast("O nome vira o nome da classe: use letras, números ou _, sem espaços."); return; }
     createFromModel(kind.model, path);
     return;

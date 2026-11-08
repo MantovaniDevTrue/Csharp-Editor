@@ -88,14 +88,17 @@ async function switchMod(uid) {
   memoSet("bunny-studio-current", uid);
   renderModSelect();
   const paths = Object.keys(files());
-  const first = paths.find((p) => /Content\/Items\/.+\.cs$/.test(p)) || paths.find((p) => p.endsWith(".cs")) || "manifest.json";
+  const first = paths.find((p) => /Content\/Items\/.+\.(cs|js)$/.test(p)) || paths.find((p) => /\.(cs|js)$/.test(p)) || "manifest.json";
   openFile(first);
-  showOutput("idle", "Nada compilado ainda.", idleOutput);
+  updateCompileLabel();
+  renderSnippets();
+  showOutput("idle", isJsProject() ? "Nada verificado ainda." : "Nada compilado ainda.", idleOutput);
   renderModCard();
 }
 function newMod() {
   openSheet({ title: "O que você quer criar?", items: [
     { glyph: "C#", label: "Mod em C#", action: () => askNewProject(null) },
+    { glyph: "JS", label: "Mod em JavaScript (Bunny até a 0.4.0)", action: () => askNewProject("js") },
     { glyph: "▦", label: "Pacote de texturas", action: () => askNewProject("texture") },
     { glyph: "Aa", label: "Pacote de fontes", action: () => askNewProject("font") },
   ] });
@@ -104,9 +107,9 @@ async function askNewProject(type) {
   const r = await ask({ title: "Novo mod", text: "O UID é gerado agora; mantenha o mesmo UID nas atualizações do mod.", fields: [{ name: "name", label: "Nome", value: "Meu Mod" }, { name: "id", label: "ID (letras minúsculas, números e _)", value: "meu_mod" }], ok: "Criar", extra: "Mod de teste" });
   if (!r) return;
   if (r.extra) { await newStressMod(); return; }
-  if (!MOD_ID_RE.test(r.id)) { toast("O ID vira o nome da classe do mod: use letras, números ou _, começando por letra."); return; }
+  if (type === "js" ? !JS_ID_RE.test(r.id) : !MOD_ID_RE.test(r.id)) { toast(type === "js" ? "No Bunny com JavaScript, o ID usa só minúsculas, números, ponto, hífen e _." : "O ID vira o nome da classe do mod: use letras, números ou _, começando por letra."); return; }
   if (!r.name || r.name.length > 100) { toast("Dê um nome de até 100 caracteres."); return; }
-  const m = type ? starterPack(type, r.id, r.name) : starterMod(r.id, r.name);
+  const m = type === "js" ? starterJsMod(r.id, r.name) : type ? starterPack(type, r.id, r.name) : starterMod(r.id, r.name);
   state.mods[m.uid] = m;
   await switchMod(m.uid);
   scheduleSave();
